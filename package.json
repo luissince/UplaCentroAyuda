@@ -1,0 +1,16 @@
+{
+  "name": "upla-centro-ayuda",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "app",
+    "server"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Luis Lara",
+  "license": "ISC"
+}

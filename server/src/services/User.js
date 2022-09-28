@@ -8,7 +8,7 @@ class User {
 
     async all(req, res) {
         try {
-            const list = await conec.query(`SELECT * FROM Usuario`,);
+            const list = await conec.query(`SELECT * FROM Soporte.Usuario`,);
             return sendSuccess(res, list);
         } catch (error) {
             console.log(error);
@@ -27,7 +27,7 @@ class User {
             estado,
             FORMAT(fecha,'yyyy-MM-dd') AS fecha,
             hora
-            FROM Usuario
+            FROM Soporte.Usuario
             ORDER BY fecha DESC, hora DESC
             OFFSET ? ROWS FETCH NEXT ? ROWS ONLY`, [
                 parseInt(req.params.posicionPagina),
@@ -42,7 +42,7 @@ class User {
                 }
             });
 
-            const total = await conec.query(`SELECT COUNT(*) AS total FROM Usuario`,);
+            const total = await conec.query(`SELECT COUNT(*) AS total FROM Soporte.Usuario`,);
 
             return sendSuccess(res, { "result": resultList, "total": total[0].total });
         } catch (error) {
@@ -54,7 +54,7 @@ class User {
     async id(req, res) {
         try {
 
-            const usuario = await conec.query("SELECT * FROM Usuario WHERE idUsuario = ?", [
+            const usuario = await conec.query("SELECT * FROM Soporte.Usuario WHERE idUsuario = ?", [
                 req.params.id
             ]);
 
@@ -75,7 +75,7 @@ class User {
         try {
             connection = await conec.beginTransaction();
 
-            const validate = await conec.execute(connection, 'SELECT idUsuario FROM Usuario WHERE email = ?', [
+            const validate = await conec.execute(connection, 'SELECT idUsuario FROM Soporte.Usuario WHERE email = ?', [
                 req.body.email,
             ]);
 
@@ -84,7 +84,7 @@ class User {
                 return sendClient(res, "Ya existe un usuario con el mismo correo electrónico.");
             }
 
-            const result = await conec.execute(connection, 'SELECT idUsuario FROM Usuario');
+            const result = await conec.execute(connection, 'SELECT idUsuario FROM Soporte.Usuario');
             let idUsuario = "";
             if (result.length != 0) {
 
@@ -113,7 +113,7 @@ class User {
             const salt = bcrypt.genSaltSync(saltRounds);
             const hash = bcrypt.hashSync(req.body.clave, salt);
 
-            await conec.execute(connection, `INSERT INTO Usuario(
+            await conec.execute(connection, `INSERT INTO Soporte.Usuario(
             idUsuario,
             nombres,
             apellidos,
@@ -151,7 +151,7 @@ class User {
         try {
             connection = await conec.beginTransaction();
 
-            const validate = await conec.execute(connection, `SELECT * FROM Usuario 
+            const validate = await conec.execute(connection, `SELECT * FROM Soporte.Usuario 
             WHERE email = ? AND idUsuario <> ?`, [
                 req.body.email,
                 req.body.idUsuario,
@@ -162,7 +162,7 @@ class User {
                 return sendClient(res, "Ya existe un usuario con el mismo correo electrónico.");
             }
 
-            await conec.execute(connection, `UPDATE Usuario 
+            await conec.execute(connection, `UPDATE Soporte.Usuario 
             SET 
             nombres = ?,
             apellidos = ?,
@@ -196,7 +196,7 @@ class User {
         try {
             connection = await conec.beginTransaction();
 
-            await conec.execute(connection, `DELETE FROM Usuario WHERE idUsuario = ?`, [
+            await conec.execute(connection, `DELETE FROM Soporte.Usuario WHERE idUsuario = ?`, [
                 req.params.id
             ]);
 
@@ -216,7 +216,7 @@ class User {
 
     async login(req, res) {
         try {
-            let validate = await conec.query(`SELECT idUsuario,clave FROM Usuario 
+            let validate = await conec.query(`SELECT idUsuario,clave FROM Soporte.Usuario 
             WHERE email = ?`, [
                 req.body.email,
             ]);
@@ -236,7 +236,7 @@ class User {
             apellidos,
             email,
             estado
-            FROM Usuario WHERE idUsuario = ?`, [
+            FROM Soporte.Usuario WHERE idUsuario = ?`, [
                 validate[0].idUsuario
             ]);
 

@@ -5,7 +5,7 @@ class Consult {
 
     async all(req, res) {
         try {
-            const list = await conec.query(`SELECT * FROM Consulta`,);
+            const list = await conec.query(`SELECT * FROM Soporte.Consulta`,);
             return sendSuccess(res, list);
         } catch (error) {
             console.log(error);
@@ -24,7 +24,7 @@ class Consult {
             estado,
             FORMAT(fecha,'yyyy-MM-dd') AS fecha,
             hora
-            FROM Consulta
+            FROM Soporte.Consulta
             ORDER BY fecha DESC, hora DESC
             OFFSET ? ROWS FETCH NEXT ? ROWS ONLY`, [
                 parseInt(req.params.posicionPagina),
@@ -39,7 +39,7 @@ class Consult {
                 }
             });
 
-            const total = await conec.query(`SELECT COUNT(*) AS total FROM Consulta`,);
+            const total = await conec.query(`SELECT COUNT(*) AS total FROM Soporte.Consulta`,);
 
             return sendSuccess(res, { "result": resultList, "total": total[0].total });
         } catch (error) {
@@ -51,7 +51,7 @@ class Consult {
     async id(req, res) {
         try {
 
-            const consulta = await conec.query("SELECT * FROM Consulta WHERE idConsulta = ?", [
+            const consulta = await conec.query("SELECT * FROM Soporte.Consulta WHERE idConsulta = ?", [
                 req.params.id
             ]);
 
@@ -71,7 +71,7 @@ class Consult {
         try {
             connection = await conec.beginTransaction();
 
-            const result = await conec.execute(connection, 'SELECT idConsulta FROM Consulta');
+            const result = await conec.execute(connection, 'SELECT idConsulta FROM Soporte.Consulta');
             let idConsulta = "";
             if (result.length != 0) {
 
@@ -97,7 +97,7 @@ class Consult {
                 idConsulta = "CS0001";
             }
 
-            await conec.execute(connection, `INSERT INTO Consulta(
+            await conec.execute(connection, `INSERT INTO Soporte.Consulta(
             idConsulta,
             asunto,
             tipoConsulta,
@@ -180,7 +180,7 @@ class Consult {
         try {
             connection = await conec.beginTransaction();
 
-            await conec.execute(connection, `DELETE FROM Consulta WHERE idConsulta = ?`, [
+            await conec.execute(connection, `DELETE FROM Soporte.Consulta WHERE idConsulta = ?`, [
                 req.params.id
             ]);
 

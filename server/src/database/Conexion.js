@@ -3,7 +3,11 @@ require('dotenv').config();
 
 class Conexion {
     constructor() {
-
+        console.log(process.env.USER)
+        console.log(process.env.PASSWORD)
+        console.log(process.env.DATABASE)
+        console.log(process.env.HOST)
+        console.log(process.env.PORTHOST)
         this.config = {
             user: process.env.USER,
             password: process.env.PASSWORD,

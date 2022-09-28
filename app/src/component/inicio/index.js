@@ -5,22 +5,22 @@ import { images } from '../../constants';
 
 const Index = () => {
 
-    const { data, isLoading, isFetching, isSuccess } = useGetDashboardQuery(undefined, {
-        refetchOnMountOrArgChange: false,
-        refetchOnFocus: false,
-        refetchOnReconnect: true,
-        // pollingInterval: 3000
-    });
+    // const { data, isLoading, isFetching, isSuccess } = useGetDashboardQuery(undefined, {
+    //     refetchOnMountOrArgChange: false,
+    //     refetchOnFocus: false,
+    //     refetchOnReconnect: true,
+    //     // pollingInterval: 3000
+    // });
 
     return (
         <>
             <div className="app-title">
-                <h1><i className="fa fa fa-home"></i> Inicio <small>{isFetching && <span className="spinner-border spinner-border-sm"></span>} </small></h1>
+                <h1><i className="fa fa fa-home"></i> Inicio </h1>
             </div>
 
             <div className="tile mb-4">
 
-                {
+                {/* {
                     isLoading ?
                         <div className="overlay">
                             <div className="m-loader mr-4">
@@ -33,7 +33,7 @@ const Index = () => {
                         </div>
                         :
                         null
-                }
+                } */}
 
                 <h4 className="tile-title"><i className="fa fa-question-circle"></i> Centro de Ayuda</h4>
 

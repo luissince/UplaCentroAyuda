@@ -1,15 +1,17 @@
 import React, { useRef, useState } from "react";
+import axios from "axios";
 
 import { useDispatch } from 'react-redux';
 import { login } from '../../store/authSlice';
 
 import { NotificationContainer, NotificationManager } from 'react-notifications';
-import {images } from '../../constants/';
+import { images } from '../../constants/';
 
 const Login = () => {
 
     const [usuario, setUsuario] = useState('');
     const [clave, setClave] = useState('');
+    const [message, setMessage] = useState('');
     const [process, setProcess] = useState(false);
 
     const refUsuario = useRef(null);
@@ -32,16 +34,21 @@ const Login = () => {
 
         setProcess(true);
 
-        await new Promise(function (resolve, reject) {
-            setTimeout(resolve, 2000);
-        });
+        try {
+            let request = await axios.post("/api/user/login", {
+                "email": usuario,
+                "clave": clave
+            });
 
-        const user = {
-            id: 342342344,
-            usuario: usuario,
-            clave: clave,
-        };
-        dispatch(login({ user: user }))
+            dispatch(login({ user: request.data }))
+        } catch (error) {
+            setProcess(false);
+            if (error.response) {
+                setMessage(error.response.data);
+            } else {
+                setMessage("Se produjo un error de conexión, intente nuevamente.");
+            }
+        }
     }
 
     return <>
@@ -74,17 +81,17 @@ const Login = () => {
                             </h4>
                             <h4 className="login-head"><i className="fa fa-fw fa-info"></i>Credenciales de Acceso</h4>
                             <div className="form-group">
-                                <label className="control-label">Usuario</label>
+                                <label className="control-label">Email</label>
                                 <input
                                     className="form-control"
                                     type="text"
-                                    placeholder="Dijite el usuario"
+                                    placeholder="Dijite el correo electrónico"
                                     ref={refUsuario}
                                     value={usuario}
                                     onChange={(event) => setUsuario(event.target.value)}
-                                    
-                                    onKeyUp={(event) =>{
-                                        if(event.key === "Enter"){
+
+                                    onKeyUp={(event) => {
+                                        if (event.key === "Enter") {
                                             onEventLogin();
                                             event.preventDefault();
                                         }
@@ -100,9 +107,9 @@ const Login = () => {
                                     ref={refClave}
                                     value={clave}
                                     onChange={(event) => setClave(event.target.value)}
-                                    
-                                    onKeyUp={(event) =>{
-                                        if(event.key === "Enter"){
+
+                                    onKeyUp={(event) => {
+                                        if (event.key === "Enter") {
                                             onEventLogin();
                                             event.preventDefault();
                                         }
@@ -117,7 +124,7 @@ const Login = () => {
                                 </button>
                             </div>
                             <div className="form-group text-center">
-                                <label className="control-label text-danger" id="lblErrorMessage"></label>
+                                <label className="control-label text-danger">{message}</label>
                             </div>
                         </div>
                     </div>

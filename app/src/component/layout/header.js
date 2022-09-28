@@ -100,7 +100,7 @@ const Header = () => {
                         <li className="user-header">
                             <img src={images.usuario} className="img-circle" alt="Usuario" />
                             <p>
-                                <span>{authentication.user.usuario}</span>
+                                <span>{authentication.user.nombres + ", " + authentication.user.apellidos}</span>
                                 <small> <i></i> Administrador</small>
                             </p>
                         </li>

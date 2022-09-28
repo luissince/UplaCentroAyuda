@@ -1,7 +1,7 @@
 {
   "name": "upla-centro-ayuda",
   "version": "1.0.0",
-  "description": "",
+  "description": "App para el centro de ayuda de la UPLA",
   "main": "index.js",
   "private": true,
   "workspaces": [
@@ -9,8 +9,31 @@
     "server"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run build --workspace=app",
+    "start": "npm run start --workspace=server",
+    "stop": "pm2 stop $ID & pm2 delete $ID",
+    "deploy": "pm2 start ecosystem.config.js --env production",
+    "dev:app": "npm start --workspace=app",
+    "dev:server": "npm run dev --workspace=server",
+    "save": "git add . && git commit -m 'act'",
+    "push": "git push origin master",
+    "pull": "git pull origin master"
   },
-  "author": "Luis Lara",
-  "license": "ISC"
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "crypto-js": "^4.1.1",
+    "ip": "^1.1.8",
+    "js-file-download": "^0.4.12",
+    "mime": "^3.0.0",
+    "moment": "^2.29.3",
+    "nodemailer": "^6.7.7",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "socket.io": "^4.5.1",
+    "socket.io-client": "^4.5.1",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-ui-express": "^4.5.0",
+    "ws": "^8.8.1"
+  }
 }

@@ -8,8 +8,8 @@ import App from './app';
 import reportWebVitals from './reportWebVitals';
 
 import './assets/css/main.css';
-import './assets/css/font-awesome.min.css';
-import './assets/css/sweetalert.min.css';
+import './assets/css/font-awesome.css';
+import './assets/css/sweetalert.css';
 import '../../node_modules/react-notifications/lib/notifications.css';
 
 import './assets/js/bootstrap.js';

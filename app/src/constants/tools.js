@@ -1,17 +1,19 @@
-function getCurrentDate() {
+import Swal from "../assets/js/sweetalert";
+
+export function getCurrentDate() {
     let today = new Date();
     let formatted_date = today.getFullYear() + "-" + ((today.getMonth() + 1) > 9 ? (today.getMonth() + 1) : '0' + (
         today.getMonth() + 1)) + "-" + (today.getDate() > 9 ? today.getDate() : '0' + today.getDate());
     return formatted_date;
 };
 
-function getCurrentTime() {
+export function getCurrentTime() {
     let today = new Date();
     let formatted_time = (today.getHours() > 9 ? today.getHours() : '0' + today.getHours()) + ":" + (today.getMinutes() > 9 ? today.getMinutes() : '0' + today.getMinutes()) + ":" + (today.getSeconds() > 9 ? today.getSeconds() : '0' + today.getSeconds());
     return formatted_time;
 }
 
-function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = "") {
+export function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = "") {
     try {
         decimalCount = Math.abs(decimalCount);
         decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
@@ -28,7 +30,7 @@ function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = "") {
     }
 };
 
-function monthName(month) {
+export function monthName(month) {
     let months = [
         "Enero",
         "Febrero",
@@ -46,14 +48,74 @@ function monthName(month) {
     return months[month - 1];
 }
 
-function porcent(total, valor) {
+export function porcent(total, valor) {
     return (valor * 100) / total;
 }
 
-export {
-    getCurrentDate,
-    getCurrentTime,
-    formatMoney,
-    monthName,
-    porcent
-};
+export function ModalAlertInfo(title, message) {
+    Swal({
+      title: title,
+      text: message,
+      type: "info",
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    });
+  }
+  
+  export function ModalAlertSuccess(title, message, callback = function () { }) {
+    Swal({
+      title: title,
+      text: message,
+      type: "success",
+      showConfirmButton: true,
+      allowOutsideClick: false,
+    }).then((event) => {
+      callback();
+    });
+  }
+  
+  export function ModalAlertWarning(title, message, callback = function () { }) {
+    Swal({
+      title: title,
+      text: message,
+      type: "warning",
+      showConfirmButton: true,
+      allowOutsideClick: false,
+    }).then((event) => {
+      callback();
+    });
+  }
+  
+  export function ModalAlertError(title, message) {
+    Swal({
+      title: title,
+      text: message,
+      type: "error",
+      showConfirmButton: true,
+      allowOutsideClick: false,
+    });
+  }
+  
+  export function ModalAlertDialog(title, mensaje, callback) {
+    Swal({
+      title: title,
+      text: mensaje,
+      type: "question",
+      showCancelButton: true,
+      confirmButtonText: "Si",
+      cancelButtonText: "No",
+      allowOutsideClick: false,
+    }).then((isConfirm) => {
+      if (isConfirm.value === undefined) {
+        return false;
+      }
+      if (isConfirm.value) {
+        callback(true);
+      } else {
+        callback(false);
+      }
+    });
+  }
+  
+

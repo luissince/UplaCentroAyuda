@@ -35,7 +35,7 @@ const Login = () => {
         setProcess(true);
 
         try {
-            let request = await axios.post("/api/user/login", {
+            const request = await axios.post("/api/user/login", {
                 "email": usuario,
                 "clave": clave
             });

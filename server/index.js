@@ -70,7 +70,7 @@ app.use(express.static(path.join(__dirname, "src/path/company")));
  */
 // app.use('/api/comprobante', require('./src/router/Comprobante'));
 app.use('/api/user', require('./src/routers/User'));
-
+app.use('/api/consult', require('./src/routers/Consult'));
 /**
  * 
  */

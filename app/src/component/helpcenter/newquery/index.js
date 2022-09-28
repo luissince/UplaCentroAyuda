@@ -1,11 +1,79 @@
+import React, { useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { images } from "../../../constants";
+import {
+    ModalAlertInfo,
+    ModalAlertDialog,
+    ModalAlertSuccess,
+    ModalAlertWarning,
+    ModalAlertError,
+} from "../../../constants/tools";
 
 const Index = () => {
+
+    const [asunto, setAsunto] = useState('');
+    const [tipoConsulta, setTipoConsulta] = useState('');
+    const [contacto, setContacto] = useState('');
+    const [descripcion, setDescripcion] = useState('');
+
+    const refAsunto = useRef(null);
+    const refTipoConsulta = useRef(null);
+    const refContacto = useRef(null);
+    const refDescripcion = useRef(null);
+
+    const authentication = useSelector((state) => state.authentication);
+
     const navigate = useNavigate();
 
-    const onEventSendTicket = ()=>{
-        navigate("/response");
+    const onEventSendTicket = async () => {
+
+        if (asunto.length == 0) {
+            refAsunto.current.focus();
+            return;
+        }
+
+        if (tipoConsulta.length == 0) {
+            refTipoConsulta.current.focus();
+            return;
+        }
+
+        if (contacto.length == 0) {
+            refContacto.current.focus();
+            return;
+        }
+
+        if (descripcion.length == 0) {
+            refDescripcion.current.focus();
+            return;
+        }
+
+        ModalAlertDialog("Consulta", "¿Está seguro de continuar?", async () => {
+            try {
+                ModalAlertInfo("Consulta", "Procesando registro...");
+
+                const request = await axios.post("/api/consult/", {
+                    "asunto": asunto,
+                    "tipoConsulta": tipoConsulta,
+                    "contacto": contacto,
+                    "descripcion": descripcion,
+                    "estado": 1,
+                    "idUsuario": authentication.user.idUsuario
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${authentication.user.token}`
+                    }
+                });
+                ModalAlertSuccess("Consulta", request.data);
+            } catch (error) {
+                console.log(error);
+                ModalAlertWarning("Consulta", "Se produjo un error de servidor, intente nuevamente.");
+            }
+        });
+
+
+        // navigate("/response");
     }
 
     return (
@@ -57,20 +125,45 @@ const Index = () => {
 
                 <div className="form-group">
                     <label className="control-label">Asunto</label>
-                    <input className="form-control is-invalid" type="text" placeholder="Asunto de la consulta" />
+                    {/* is-invalid */}
+                    <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Asunto de la consulta"
+                        ref={refAsunto}
+                        value={asunto}
+                        onChange={(event) => setAsunto(event.target.value)}
+                    />
                     <div className="col-form-label-sm text-danger">Min. 20 caracteres</div>
                 </div>
 
                 <div className="form-group">
                     <label className="control-label">Tipo de Consulta</label>
-                    <select className="form-control">
+                    <select
+                        className="form-control"
+                        ref={refTipoConsulta}
+                        value={tipoConsulta}
+                        onChange={(event) => setTipoConsulta(event.target.value)}>
                         <option value="">Seleccione</option>
+                        <option value="1">Atención</option>
+                        <option value="2">Incidencia</option>
+                        <option value="3">Orientación</option>
+                        <option value="4">Queja o reclamo</option>
+                        <option value="5">Sugerencia</option>
                     </select>
                 </div>
 
+                {/* is-valid */}
                 <div className="form-group">
                     <label className="control-label">Cel. / Tel.</label>
-                    <input className="form-control is-valid" type="text" placeholder="Ingrese un número para comunicarse." />
+                    <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Ingrese un número para comunicarse."
+                        ref={refContacto}
+                        value={contacto}
+                        onChange={(event) => setContacto(event.target.value)}
+                    />
                 </div>
 
                 <div className="form-group">
@@ -98,7 +191,14 @@ const Index = () => {
 
                 <div className="form-group">
                     <label className="control-label">Descripción</label>
-                    <textarea className="form-control" rows="3" placeholder="Descripción de la consulta."></textarea>
+                    <textarea
+                        className="form-control"
+                        rows="3"
+                        placeholder="Descripción de la consulta."
+                        ref={refDescripcion}
+                        value={descripcion}
+                        onChange={(event) => setDescripcion(event.target.value)}
+                    ></textarea>
                     <div className="col-form-label-sm text-danger">Min. 40 caracteres</div>
                 </div>
 

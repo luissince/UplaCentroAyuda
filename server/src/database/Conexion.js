@@ -37,7 +37,7 @@ class Conexion {
                 let result = await pool.query(slq);
                 resolve(result.recordset);
             } catch (err) {
-                console.error(err.precedingErrors[0].originalError.info.message);
+                console.log(err);
                 reject(err.precedingErrors[0].originalError.info.message);
             } finally {
                 pool.close();

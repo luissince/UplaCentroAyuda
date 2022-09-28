@@ -3,11 +3,6 @@ require('dotenv').config();
 
 class Conexion {
     constructor() {
-        console.log(process.env.USER)
-        console.log(process.env.PASSWORD)
-        console.log(process.env.DATABASE)
-        console.log(process.env.HOST)
-        console.log(process.env.PORTHOST)
         this.config = {
             user: process.env.USER,
             password: process.env.PASSWORD,
@@ -25,6 +20,11 @@ class Conexion {
     }
 
     query(slq, param = []) {
+        console.log(process.env.USER)
+        console.log(process.env.PASSWORD)
+        console.log(process.env.DATABASE)
+        console.log(process.env.HOST)
+        console.log(process.env.PORTHOST)
         return new Promise(async (resolve, reject) => {
             const pool = new sql.ConnectionPool(this.config);
             try {

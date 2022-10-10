@@ -15,7 +15,7 @@ router.post('/' ,async function (req, res) {
     return await user.add(req, res);
 });
 
-router.put('/' ,async function (req, res) {
+router.put('/' ,token,async function (req, res) {
     return await user.update(req, res);
 });
 

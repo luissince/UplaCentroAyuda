@@ -65,7 +65,14 @@ const Index = () => {
                         'Authorization': `Bearer ${authentication.user.token}`
                     }
                 });
-                ModalAlertSuccess("Consulta", request.data);
+                ModalAlertSuccess("Consulta", request.data, () => {
+                    navigate("/response", {
+                        replace: true,
+                        state: {
+                            id: 1, name: 'sabaoon'
+                        }
+                    });
+                });
             } catch (error) {
                 console.log(error);
                 ModalAlertWarning("Consulta", "Se produjo un error de servidor, intente nuevamente.");
@@ -73,7 +80,7 @@ const Index = () => {
         });
 
 
-        // navigate("/response");
+        // 
     }
 
     return (

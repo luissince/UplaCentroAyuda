@@ -1,6 +1,10 @@
-
+import { useLocation } from 'react-router-dom';
 
 const Index = () => {
+
+    const location = useLocation();
+
+    console.log(location.state)
 
     return (
         <>
@@ -10,14 +14,14 @@ const Index = () => {
 
             <div className="tile mb-4">
 
-                {/* <div className="overlay p-5">
+                <div className="overlay p-5">
                     <div className="m-loader mr-4">
                         <svg className="m-circular" viewBox="25 25 50 50">
                             <circle className="path" cx="50" cy="50" r="20" fill="none" strokeWidth="4" strokeMiterlimit="10"></circle>
                         </svg>
                     </div>
                     <h4 className="l-text text-center text-white p-10">Cargando información...</h4>
-                </div> */}
+                </div>
 
                 {/* <h4 className="tile-title"><i className="fa fa-file-text"></i> Registrar tu consulta</h4> */}
 
@@ -91,6 +95,15 @@ const Index = () => {
             </div>
 
             <div className="tile mb-4">
+                <div className="overlay p-5">
+                    <div className="m-loader mr-4">
+                        <svg className="m-circular" viewBox="25 25 50 50">
+                            <circle className="path" cx="50" cy="50" r="20" fill="none" strokeWidth="4" strokeMiterlimit="10"></circle>
+                        </svg>
+                    </div>
+                    <h4 className="l-text text-center text-white p-10">Cargando información...</h4>
+                </div>
+
                 <h4 className="tile-title"><i className="fa fa-comment-o"></i> Consulta Creada.</h4>
 
                 <div className="row">
@@ -197,8 +210,8 @@ const Index = () => {
                     </div>
                 </div>
             </div>
-            
-      
+
+
         </>
     );
 }

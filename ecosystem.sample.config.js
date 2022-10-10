@@ -1,7 +1,7 @@
 module.exports = {
     apps: [
         {
-            name: "inmobilaria",
+            name: "uplacentroayuda",
             script: "./server/index.js",
             watch: true,
             env: {

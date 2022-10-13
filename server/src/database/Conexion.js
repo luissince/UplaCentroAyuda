@@ -15,6 +15,7 @@ class Conexion {
                 idleTimeoutMillis: 30000
             },
             synchronize: true,
+            encrypt: false,
             trustServerCertificate: true,
         };
     }

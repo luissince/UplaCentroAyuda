@@ -1,5 +1,5 @@
 import React from "react";
-const Welcome = () => {
+const Index = () => {
     return <>
             <div className="app-title">
                 <div>
@@ -21,4 +21,4 @@ const Welcome = () => {
     </>
 }
 
-export default Welcome;
+export default Index;

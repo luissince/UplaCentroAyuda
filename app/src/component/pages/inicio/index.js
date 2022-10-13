@@ -1,7 +1,4 @@
 import React from 'react';
-import { formatMoney } from '../../constants/tools';
-import { useGetDashboardQuery } from '../../api/dashboardApi';
-import { images } from '../../constants';
 
 const Index = () => {
 

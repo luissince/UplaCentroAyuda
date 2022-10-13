@@ -1,15 +1,16 @@
-import React, { useState, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
+import React, { useState, useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { addConsult } from '../../../../api/rutas';
 import { useNavigate } from "react-router-dom";
-import { images } from "../../../constants";
+import { NotificationContainer, NotificationManager } from 'react-notifications';
+
 import {
     ModalAlertInfo,
     ModalAlertDialog,
     ModalAlertSuccess,
-    ModalAlertWarning,
-    ModalAlertError,
-} from "../../../constants/tools";
+    ModalAlertCatch,
+    imageBase64
+} from "../../../../constants/tools";
 
 const Index = () => {
 
@@ -17,18 +18,19 @@ const Index = () => {
     const [tipoConsulta, setTipoConsulta] = useState('');
     const [contacto, setContacto] = useState('');
     const [descripcion, setDescripcion] = useState('');
+    const [files, setFiles] = useState([]);
 
     const refAsunto = useRef(null);
     const refTipoConsulta = useRef(null);
     const refContacto = useRef(null);
     const refDescripcion = useRef(null);
+    const refAdjuntar = useRef(null);
 
     const authentication = useSelector((state) => state.authentication);
 
     const navigate = useNavigate();
 
     const onEventSendTicket = async () => {
-
         if (asunto.length == 0) {
             refAsunto.current.focus();
             return;
@@ -49,38 +51,65 @@ const Index = () => {
             return;
         }
 
+
         ModalAlertDialog("Consulta", "¿Está seguro de continuar?", async () => {
             try {
                 ModalAlertInfo("Consulta", "Procesando registro...");
 
-                const request = await axios.post("/api/consult/", {
+                const newArray = [];
+                for (const value of files) {
+                    const result = await imageBase64(value);
+                    if (typeof result == "object") {
+                        newArray.push(result);
+                    }
+                }
+
+                const request = await addConsult({
                     "asunto": asunto,
                     "tipoConsulta": tipoConsulta,
                     "contacto": contacto,
                     "descripcion": descripcion,
                     "estado": 1,
-                    "idUsuario": authentication.user.idUsuario
-                }, {
-                    headers: {
-                        'Authorization': `Bearer ${authentication.user.token}`
-                    }
+                    "files": newArray,
+                    "idUsuario": authentication.user.docNumId,
+                    "token": authentication.user.token
                 });
-                ModalAlertSuccess("Consulta", request.data, () => {
+
+                ModalAlertSuccess("Consulta", request.data.message, () => {
                     navigate("/response", {
                         replace: true,
                         state: {
-                            id: 1, name: 'sabaoon'
+                            "idConsulta": request.data.idConsulta,
+                            "token": authentication.user.token
                         }
                     });
                 });
             } catch (error) {
-                console.log(error);
-                ModalAlertWarning("Consulta", "Se produjo un error de servidor, intente nuevamente.");
+                ModalAlertCatch("Consulta", error);
             }
         });
+    }
 
+    const onEventFileLogo = async (event) => {
+        if (event.target.files.length !== 0) {
+            if (event.target.files[0].type !== "application/pdf") {
+                NotificationManager.warning("El archivo a subir tiene que ser formato pdf.", "Consulta");
+            }
 
-        // 
+            const filterName = files.filter((element, index) => element.name === event.target.files[0].name);
+            if (filterName.length == 0) {
+                setFiles(data => [...data, event.target.files]);
+            } else {
+                NotificationManager.warning("Hay un archivo con el mismo nombre.", "Consulta");
+            }
+        } else {
+            refAdjuntar.current.value = "";
+        }
+    }
+
+    const onEventRemoveFile = (remove) => {
+        const arrTemp = files.filter((element, index) => remove != index);
+        setFiles(arrTemp);
     }
 
     return (
@@ -90,15 +119,6 @@ const Index = () => {
             </div>
 
             <div className="tile mb-4">
-
-                {/* <div className="overlay p-5">
-                    <div className="m-loader mr-4">
-                        <svg className="m-circular" viewBox="25 25 50 50">
-                            <circle className="path" cx="50" cy="50" r="20" fill="none" strokeWidth="4" strokeMiterlimit="10"></circle>
-                        </svg>
-                    </div>
-                    <h4 className="l-text text-center text-white p-10">Cargando información...</h4>
-                </div> */}
 
                 <h4 className="tile-title"><i className="fa fa-file-text"></i> Registrar tu consulta</h4>
 
@@ -127,6 +147,17 @@ const Index = () => {
                         </ul>
                         <h4><i className="fa fa-info-circle"></i> Recuerda</h4>
                         <p>Al generar le ticket se te envíara la confirmación a tu correo institucional o personal con el detalle del ticket generado.</p>
+                    </div>
+                </div>
+
+                <div className="form-group">
+                    <label className="control-label">Estudiante</label>
+                    {/* is-invalid */}
+                    <div className="input-group">
+                        <input type="text" className="form-control" placeholder="Escribir para filtrar" />
+                            <div className="input-group-append">
+                                <button className="btn btn-success" type="button" id="btnBuscar">Buscar</button>
+                            </div>
                     </div>
                 </div>
 
@@ -174,23 +205,41 @@ const Index = () => {
                 </div>
 
                 <div className="form-group">
-                    <label className="control-label">Archivo</label>
+                    <label className="control-label">Archivo (PDF)</label>
                     <div className="card">
-                        <h4 className="card-header"><button className="btn btn-primary"><i className="fa fa-cloud-upload"></i> Adjuntar</button></h4>
+                        <h4 className="card-header">
+                            <input
+                                type="file"
+                                id="filePdf"
+                                accept=".pdf"
+                                className="d-none"
+                                onChange={onEventFileLogo}
+                                ref={refAdjuntar} />
+                            <button
+                                htmlFor="filePdf"
+                                className="btn btn-primary"
+                                onClick={e => refAdjuntar.current && refAdjuntar.current.click()}>
+                                <i className="fa fa-cloud-upload"></i> Adjuntar
+                            </button>
+                        </h4>
                         <div className="card-body">
                             <h6 className="card-subtitle text-muted">Máx 20MB por achivo</h6>
                             <div className="card-body">
+                                {
+                                    files.map((item, index) => {
+                                        return (
+                                            <div key={index} className="media text-muted pt-3">
+                                                <div className="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                                    <div className="d-flex justify-content-between align-items-center w-100">
+                                                        <strong className="text-gray-dark"><i className="fa fa-file"></i> {item[0].name}</strong>
+                                                        <button className="btn btn-outline-danger" onClick={() => onEventRemoveFile(index)}><i className="fa fa-trash"></i></button>
+                                                    </div>
 
-                                <div className="media text-muted pt-3">
-                                    <div className="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                                        <div className="d-flex justify-content-between align-items-center w-100">
-                                            <strong className="text-gray-dark"><i className="fa fa-file"></i> Nombre del Archivo</strong>
-                                            <button className="btn btn-outline-danger"><i className="fa fa-trash"></i></button>
-                                        </div>
-                                        {/* <span className="d-block">Lista para subir.</span> */}
-                                    </div>
-                                </div>
-
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                }
                             </div>
                         </div>
                     </div>
@@ -209,6 +258,7 @@ const Index = () => {
                     <div className="col-form-label-sm text-danger">Min. 40 caracteres</div>
                 </div>
 
+                <NotificationContainer />
             </div>
         </>
     );

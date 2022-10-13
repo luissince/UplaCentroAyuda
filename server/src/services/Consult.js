@@ -1,5 +1,7 @@
+const path = require("path");
 const { sendSuccess, sendError, sendClient } = require('../tools/Message');
 const conec = require('../database/Conexion');
+const { isDirectory, isFile, removeFile, createFile, mkdir, chmod } = require('../tools/Tools');
 
 class Consult {
 
@@ -43,15 +45,25 @@ class Consult {
 
             return sendSuccess(res, { "result": resultList, "total": total[0].total });
         } catch (error) {
-            console.log(error);
             return sendError(res, "Se produjo un error de servidor, intente nuevamente.");
         }
     }
 
     async id(req, res) {
         try {
-
-            const consulta = await conec.query("SELECT * FROM Soporte.Consulta WHERE idConsulta = ?", [
+            const consulta = await conec.query(`SELECT
+            idConsulta,
+            asunto,
+            tipoConsulta,
+            contacto,
+            descripcion,
+            estado,
+            format(fecha,'yyyy/MM/dd') AS fecha,
+            convert(varchar,hora,14) AS hora,
+            c_cod_usuario
+            FROM 
+            Soporte.Consulta 
+            WHERE idConsulta = ?`, [
                 req.params.id
             ]);
 
@@ -61,7 +73,6 @@ class Consult {
                 return sendClient(res, "Consulta no encontrado.");
             }
         } catch (error) {
-            console.log(error);
             return sendError(res, "Se produjo un error de servidor, intente nuevamente.");
         }
     }
@@ -106,7 +117,7 @@ class Consult {
             estado,
             fecha,
             hora,
-            idUsuario) 
+            c_cod_usuario) 
             VALUES(?,?,?,?,?,?,GETDATE(),GETDATE(),?)`, [
                 idConsulta,
                 req.body.asunto,
@@ -114,12 +125,51 @@ class Consult {
                 req.body.contacto,
                 req.body.descripcion,
                 req.body.estado,
-                req.body.idUsuario,
+                req.body.c_cod_usuario,
             ]);
 
-            await conec.commit(connection);
+            const file = path.join(__dirname, '../', 'path/file');
 
-            return sendSuccess(res, "Se regitró correctamente la consulta.");
+            const directory = await isDirectory(file);
+            if (!directory) {
+                await mkdir(file, { recursive: true });
+                await chmod(file, 777);
+            }
+
+            let archivo = await conec.execute(connection, 'SELECT idArchivo FROM Soporte.Archivo');
+            let idArchivo = 0;
+            if (archivo.length != 0) {
+
+                let quitarValor = archivo.map(function (item) {
+                    return parseInt(item.idArchivo);
+                });
+
+                let valorActual = Math.max(...quitarValor);
+                let incremental = valorActual + 1;
+                idArchivo = incremental;
+            } else {
+                idArchivo = 1;
+            }
+
+            for (const value of req.body.files) {
+                const nameFile = `${Date.now() + 'file'}.${value.extension}`;
+                await createFile(path.join(file, nameFile), value.base64String);
+
+                await conec.execute(connection, `INSERT INTO Soporte.Archivo(
+                    idArchivo,
+                    idConsulta,
+                    nombre)
+                    VALUES(?,?,?)`, [
+                    idArchivo,
+                    idConsulta,
+                    nameFile
+                ]);
+
+                idArchivo++;
+            }
+
+            await conec.commit(connection);
+            return sendSuccess(res, { "idConsulta": idConsulta, "message": "Se regitró correctamente la consulta." });
         } catch (error) {
             if (connection != null) {
                 await conec.rollback(connection);
@@ -130,72 +180,6 @@ class Consult {
         }
     }
 
-    async update(req, res) {
-        let connection = null;
-        try {
-            connection = await conec.beginTransaction();
-
-            const validate = await conec.execute(connection, `SELECT * FROM Usuario 
-            WHERE email = ? AND idUsuario <> ?`, [
-                req.body.email,
-                req.body.idUsuario,
-            ]);
-
-            if (validate.length > 0) {
-                await conec.rollback(connection);
-                return sendClient(res, "Ya existe un usuario con el mismo correo electrónico.");
-            }
-
-            await conec.execute(connection, `UPDATE Usuario 
-            SET 
-            nombres = ?,
-            apellidos = ?,
-            email = ?,
-            estado = ?,
-            fupdate = GETDATE(),
-            hupdate = GETDATE()
-            WHERE idUsuario = ?`, [
-                req.body.nombres,
-                req.body.apellidos,
-                req.body.email,
-                req.body.estado,
-                req.body.idUsuario,
-            ]);
-
-            await conec.commit(connection);
-
-            return sendSuccess(res, "Se actualizó correctamente el usuario.");
-        } catch (error) {
-            if (connection != null) {
-                await conec.rollback(connection);
-            }
-            return sendError(res, "Se produjo un error de servidor, intente nuevamente.");
-        } finally {
-            if (connection != null) connection.parent.close();
-        }
-    }
-
-    async delete(req, res) {
-        let connection = null;
-        try {
-            connection = await conec.beginTransaction();
-
-            await conec.execute(connection, `DELETE FROM Soporte.Consulta WHERE idConsulta = ?`, [
-                req.params.id
-            ]);
-
-            await conec.commit(connection);
-
-            return sendSuccess(res, "Se eliminó correctamente la consulta.");
-        } catch (error) {
-            if (connection != null) {
-                await conec.rollback(connection);
-            }
-            return sendError(res, "Se produjo un error de servidor, intente nuevamente.");
-        } finally {
-            if (connection != null) connection.parent.close();
-        }
-    }
 
 }
 

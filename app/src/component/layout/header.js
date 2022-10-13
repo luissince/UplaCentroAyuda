@@ -27,7 +27,7 @@ const Header = () => {
     const onEventCloseSession = () => {
         dispatch(logout())
         dispatch(clear());
-        navigate("/", { replace: true });
+        navigate("/");
     }
 
     return (

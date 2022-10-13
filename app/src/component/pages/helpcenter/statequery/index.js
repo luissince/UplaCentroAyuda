@@ -1,5 +1,4 @@
 
-import { images } from "../../../constants";
 
 const Index = () => {
 

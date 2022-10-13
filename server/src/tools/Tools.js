@@ -1,49 +1,52 @@
-const fs = require("fs");
+const { lstat, writeFile, unlink, mkdir, chmod } = require("fs/promises");
+const crypto = require('crypto');
 
 function isEmail(value) {
     const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     return value.match(validRegex) != null ? true : false;
 }
 
-function isDirectory(file) {
+
+const isNumber = (value) => Number.isInteger(value);
+
+async function isDirectory(file) {
     try {
-        let result = fs.lstatSync(file).isDirectory()
-        return result;
+        const stats = await lstat(file);
+        if (stats.isDirectory()) {
+            return true;
+        }
+        return false;
     } catch (error) {
         return false;
     }
 }
 
-function isFile(file) {
+async function isFile(file) {
     try {
-        let result = fs.lstatSync(file).isFile()
-        return result;
+        const stats = await lstat(file);
+        if (stats.isFile()) {
+            return true;
+        }
+        return false;
     } catch (error) {
         return false;
     }
 }
 
 
-function removeFile(file) {
+async function removeFile(file) {
     try {
-        fs.unlinkSync(file)
+        await unlink(file)
         return true;
     } catch (error) {
         return false;
     }
 }
 
-function writeFile(file, data, options = 'base64') {
-    fs.writeFile(file, data, options, function () { });
+async function createFile(file, data, options = 'base64') {
+    await writeFile(file, data, options);
 }
 
-function mkdir(file) {
-    fs.mkdirSync(file);
-}
-
-function chmod(file, mode = 777) {
-    fs.chmod(file, mode);
-}
 
 function currentDate() {
     let date = new Date();
@@ -180,12 +183,12 @@ function zfill(number, width = 6) {
     }
 }
 
-function manzanaLote(lot, manz) {
-    let manzana = manz;
-    let lote = lot;
+function SHA1(value) {
+    return crypto.createHash("sha1").update(value, "binary").digest("hex");
+}
 
-    return lote + " - " + manzana;
-
+function MD5(value) {
+    return crypto.createHash('md5').update(value).digest("hex");
 }
 
 module.exports = {
@@ -201,9 +204,11 @@ module.exports = {
     isDirectory,
     isFile,
     removeFile,
-    writeFile,
+    createFile,
     mkdir,
     chmod,
-    manzanaLote,
-    isEmail
+    SHA1,
+    MD5,
+    isEmail,
+    isNumber
 };

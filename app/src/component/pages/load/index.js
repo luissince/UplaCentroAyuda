@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { restore } from '../../store/authSlice';
+import { restore } from '../../../store/authSlice';
  
-const Load = () => {
+const Index = () => {
 
     const dispatch = useDispatch()
 
@@ -26,4 +26,4 @@ const Load = () => {
     );
 }
 
-export default Load;
+export default Index;

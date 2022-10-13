@@ -1,28 +1,28 @@
 import React, { useRef, useState } from "react";
-import axios from "axios";
+import { getLogin } from '../../../api/rutas';
 
 import { useDispatch } from 'react-redux';
-import { login } from '../../store/authSlice';
+import { login } from '../../../store/authSlice';
 
 import { NotificationContainer, NotificationManager } from 'react-notifications';
-import { images } from '../../constants/';
+import { images } from '../../../constants/';
 
-const Login = () => {
+const Index = () => {
 
-    const [usuario, setUsuario] = useState('');
+    const [codigo, setCodigo] = useState('');
     const [clave, setClave] = useState('');
     const [message, setMessage] = useState('');
     const [process, setProcess] = useState(false);
 
-    const refUsuario = useRef(null);
+    const refCodigo = useRef(null);
     const refClave = useRef(null);
 
     const dispatch = useDispatch()
 
     const onEventLogin = async () => {
-        if (usuario == "") {
-            NotificationManager.warning("Ingrese su usuario.", "Login");
-            refUsuario.current.focus();
+        if (codigo == "") {
+            NotificationManager.warning("Ingrese su codigo.", "Login");
+            refCodigo.current.focus();
             return;
         }
 
@@ -35,10 +35,10 @@ const Login = () => {
         setProcess(true);
 
         try {
-            const request = await axios.post("/api/user/login", {
-                "email": usuario,
+            const request = await getLogin({
+                "codigo": codigo,
                 "clave": clave
-            });
+            })
 
             dispatch(login({ user: request.data }))
         } catch (error) {
@@ -81,14 +81,14 @@ const Login = () => {
                             </h4>
                             <h4 className="login-head"><i className="fa fa-fw fa-info"></i>Credenciales de Acceso</h4>
                             <div className="form-group">
-                                <label className="control-label">Email</label>
+                                <label className="control-label">Código</label>
                                 <input
                                     className="form-control"
                                     type="text"
-                                    placeholder="Dijite el correo electrónico"
-                                    ref={refUsuario}
-                                    value={usuario}
-                                    onChange={(event) => setUsuario(event.target.value)}
+                                    placeholder="Dijite su código"
+                                    ref={refCodigo}
+                                    value={codigo}
+                                    onChange={(event) => setCodigo(event.target.value)}
 
                                     onKeyUp={(event) => {
                                         if (event.key === "Enter") {
@@ -137,4 +137,4 @@ const Login = () => {
     </>
 }
 
-export default Login;
+export default Index;

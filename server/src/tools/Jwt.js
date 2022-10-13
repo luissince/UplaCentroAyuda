@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-function createToken(user, key, expiresIn = '10h') {
+function createToken(user, expiresIn = '24h') {
     return new Promise((resolve, reject) => {
-        jwt.sign(user, key, { expiresIn: expiresIn }, (error, token) => {
+        jwt.sign(user, process.env.TOKEN, { expiresIn: expiresIn }, (error, token) => {
             if (error) {
                 reject("error");
             } else {
@@ -12,15 +13,14 @@ function createToken(user, key, expiresIn = '10h') {
     });
 }
 
-function verifyToken(token, key) {
-    return new Promise((resolve, reject) => {
-        jwt.verify(token, key, (error, authorization) => {
-            if (error) {
-                reject("expired");
-            } else {
-                resolve(authorization);
-            }
-        });
+function verifyToken(req, res, next) {
+    jwt.verify(req.token, process.env.TOKEN, (error, decoded) => {
+        if (error) {
+            res.status(403).send("Token invalid or expired");
+        } else {
+            req.decoded = decoded;
+            next();
+        }
     });
 }
 
@@ -32,7 +32,7 @@ function token(req, res, next) {
         req.token = token;
         next();
     } else {
-        res.sendStatus(403);
+        res.status(401).send("Unauthorized");
     }
 }
 

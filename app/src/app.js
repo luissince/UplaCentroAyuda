@@ -6,14 +6,13 @@ import { useSelector } from 'react-redux';
 import Menu from './component/layout/menu';
 import Header from './component/layout/header.js';
 
-import Load from './component/load/Load';
-import Login from './component/login/Login';
-import Welcome from './component/welcome/Welcome';
-import Inicio from './component/inicio';
-import NewQuery from './component/helpcenter/newquery';
-import ResponseQuery from './component/helpcenter/newquery/response';
-import StateQuery from './component/helpcenter/statequery';
-import Report from './component/report/Report';
+import Load from './component/pages/load';
+import Login from './component/pages/login';
+import Welcome from './component/pages/welcome';
+import Inicio from './component/pages/inicio';
+import NewQuery from './component/pages/helpcenter/newquery';
+import ResponseQuery from './component/pages/helpcenter/newquery/response';
+import StateQuery from './component/pages/helpcenter/statequery';
 import NotFound from './component/pages/NotFound';
 
 function App() {
@@ -81,10 +80,6 @@ function App() {
                                             <Route
                                                 path="/state"
                                                 element={<StateQuery />}
-                                            />
-                                            <Route
-                                                path="/report"
-                                                element={<Report />}
                                             />
                                             <Route path="*" element={<NotFound />} />
                                         </Switch>

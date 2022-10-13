@@ -12,14 +12,25 @@ import {
     imageBase64
 } from "../../../../constants/tools";
 
+import { filterStudent } from '../../../../api/rutas';
+
+import SearchStudent from "../../../part/search_student";
+
 const Index = () => {
 
+    const selectItem = useRef(false);
+    const filter = useRef(false);
+    
+    const [idStudent,setIdStudent] = useState('');
+    const [student, setStudent] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
     const [asunto, setAsunto] = useState('');
     const [tipoConsulta, setTipoConsulta] = useState('');
     const [contacto, setContacto] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [files, setFiles] = useState([]);
 
+    const refStudent = useRef(null);
     const refAsunto = useRef(null);
     const refTipoConsulta = useRef(null);
     const refContacto = useRef(null);
@@ -51,7 +62,6 @@ const Index = () => {
             return;
         }
 
-
         ModalAlertDialog("Consulta", "¿Está seguro de continuar?", async () => {
             try {
                 ModalAlertInfo("Consulta", "Procesando registro...");
@@ -71,7 +81,8 @@ const Index = () => {
                     "descripcion": descripcion,
                     "estado": 1,
                     "files": newArray,
-                    "idUsuario": authentication.user.docNumId,
+                    "idStudent": idStudent,
+                    "c_cod_usuario": authentication.user.docNumId,
                     "token": authentication.user.token
                 });
 
@@ -112,6 +123,40 @@ const Index = () => {
         setFiles(arrTemp);
     }
 
+    const handleFilter = async (event) => {
+        const searchWord = selectItem.current ? "" : event.target.value;
+        setStudent(searchWord);
+        selectItem.current = false;
+        if (searchWord.length === 0) {
+            setFilteredData([]);
+            return;
+        }
+
+        if (filter.current) return;
+
+        filter.current = true;
+
+        const response = await filterStudent(searchWord,authentication.user.token);
+        setFilteredData(response);
+
+        filter.current = false;
+    }
+
+    const onEventClearInput = () => {
+        setStudent("");
+        setIdStudent("");
+        setFilteredData([]);
+        selectItem.current = false;
+    }
+
+    const onEventSelectItem = (value) => {
+        setStudent(value.DatosPersonales);
+        setIdStudent(value.codigoEst);
+        setFilteredData([]);
+        selectItem.current = true;
+    }
+
+
     return (
         <>
             <div className="app-title">
@@ -150,16 +195,15 @@ const Index = () => {
                     </div>
                 </div>
 
-                <div className="form-group">
-                    <label className="control-label">Estudiante</label>
-                    {/* is-invalid */}
-                    <div className="input-group">
-                        <input type="text" className="form-control" placeholder="Escribir para filtrar" />
-                            <div className="input-group-append">
-                                <button className="btn btn-success" type="button" id="btnBuscar">Buscar</button>
-                            </div>
-                    </div>
-                </div>
+
+                <SearchStudent
+                    placeholder="Escribe para iniciar a filtrar el estudiante..."
+                    refStudent={refStudent}
+                    student={student}
+                    filteredData={filteredData}
+                    onEventClearInput={onEventClearInput}
+                    handleFilter={handleFilter}
+                    onEventSelectItem={onEventSelectItem} />
 
                 <div className="form-group">
                     <label className="control-label">Asunto</label>

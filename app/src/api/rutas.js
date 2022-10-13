@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = process.env.REACT_APP_URL;
+axios.defaults.baseURL = process.env.REACT_APP_URL
 
 /**
  * 
@@ -9,7 +9,7 @@ const API = process.env.REACT_APP_URL;
  * @returns response
  */
 export function getIdConsult(idConsulta, token) {
-    return axios.get(`${API}/api/consult/${idConsulta}`, {
+    return axios.get(`/api/consult/${idConsulta}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -18,14 +18,11 @@ export function getIdConsult(idConsulta, token) {
 
 /**
  * 
- * @param {codigo,clave} user 
+ * @param {*} user 
  * @returns promise
  */
 export function getLogin(user) {
-    return axios.post(`${API}/api/user/login`, {
-        "codigo": user.codigo,
-        "clave": user.clave
-    });
+    return axios.post(`/api/user/login`, user);
 }
 
 /**
@@ -34,17 +31,28 @@ export function getLogin(user) {
  * @returns 
  */
 export function addConsult(consult) {
-    return axios.post("/api/consult/", {
-        "asunto": consult.asunto,
-        "tipoConsulta": consult.tipoConsulta,
-        "contacto": consult.contacto,
-        "descripcion": consult.descripcion,
-        "estado": consult.estado,
-        "files": consult.files,
-        "c_cod_usuario": consult.idUsuario
-    }, {
+    return axios.post(`/api/consult/`, consult, {
         headers: {
             'Authorization': `Bearer ${consult.token}`
         }
     });
+}
+
+/**
+ * 
+ * @param {*} value // valor a filtrar 
+ * @param {*} token // token de autorización
+ * @returns array
+ */
+export async function filterStudent(value, token) {
+    try {
+        const response = await axios.get(`/api/student/filter/${value}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (ex) {
+        return [];
+    }
 }

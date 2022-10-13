@@ -4,7 +4,7 @@ require('dotenv').config();
 class Conexion {
     constructor() {
         this.config = {
-            user: process.env.USER,
+            user: process.env.USER, 
             password: process.env.PASSWORD,
             database: process.env.DATABASE,
             server: process.env.HOST,

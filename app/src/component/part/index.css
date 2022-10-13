@@ -6,6 +6,7 @@
     padding-left: 0;
     margin-bottom: 0;
     border-radius: 0.25rem;
+    border: 1px solid #045ebf ;
   
     background-color: white;
   
@@ -16,8 +17,8 @@
   }
   
   .dataResult:focus-within {
-    border: 1px solid #80bdff;
+    /* border: 1px solid #045ebf ; */
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    /* box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); */
   }
   

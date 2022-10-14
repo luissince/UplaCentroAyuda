@@ -4,7 +4,7 @@ require('dotenv').config();
 class Conexion {
     constructor() {
         this.config = {
-            user: process.env.USER, 
+            user: process.env.USER,
             password: process.env.PASSWORD,
             database: process.env.DATABASE,
             server: process.env.HOST,
@@ -37,8 +37,13 @@ class Conexion {
                 let result = await pool.query(slq);
                 resolve(result.recordset);
             } catch (err) {
-                console.log(err);
-                reject(err.precedingErrors[0].originalError.info.message);
+                if (err.originalError) {
+                    reject(err.originalError.info.message);
+                } else if (err.precedingErrors) {
+                    reject(err.precedingErrors[0].originalError.info.message);
+                } else {
+                    reject("Problemas con la sintaxis.");
+                }
             } finally {
                 pool.close();
             }
@@ -69,7 +74,13 @@ class Conexion {
                 const result = await request.execute(slq);
                 resolve(result.recordset);
             } catch (err) {
-                reject(err.precedingErrors[0].originalError.info.message);
+                if (err.originalError) {
+                    reject(err.originalError.info.message);
+                } else if (err.precedingErrors) {
+                    reject(err.precedingErrors[0].originalError.info.message);
+                } else {
+                    reject("Problemas con la sintaxis.");
+                }
             } finally {
                 pool.close();
             }
@@ -105,10 +116,16 @@ class Conexion {
                 let result = await connection.request().query(slq);
                 resolve(result.recordset);
             } catch (err) {
-                reject(err.originalError.info.message);
+                if (err.originalError) {
+                    reject(err.originalError.info.message);
+                } else if (err.precedingErrors) {
+                    reject(err.precedingErrors[0].originalError.info.message);
+                } else {
+                    reject("Problemas con la sintaxis.");
+                }
             }
         });
-    } 
+    }
 
     commit(connection) {
         return new Promise(async (resolve, reject) => {

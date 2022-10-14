@@ -1,37 +1,36 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+
+import { useLocation, Redirect } from 'react-router-dom';
+
 import { getIdConsult } from '../../../../../api/rutas';
 import { timeForma24 } from '../../../../../constants/tools';
-import { useLocation, useNavigate } from 'react-router-dom';
 
-const Index = () => {
-    const navigate = useNavigate();
+const Index = (props) => {
     const location = useLocation();
 
     const [isSuccess, setSuccess] = useState(false);
-    const [isFetching, setFetching] = useState(true);
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState({});
 
-
     useEffect(() => {
-        if (location.state == null) {
-            navigate("/", {
-                replace: true,
-            });
-            return;
+
+        const loadData = async () => {
+            try {
+                const response = await getIdConsult(location.state.idConsulta, location.state.token);
+                setData(response.data);
+                setSuccess(true);
+                setLoading(false);
+            } catch (error) {
+                setSuccess(false);
+                setLoading(false);
+            }
         }
 
         loadData();
-
     }, []);
 
-    const loadData = async () => {
-        try {
-            const response = await getIdConsult(location.state.idConsulta, location.state.token);
-            console.log(response);
-        } catch (error) {
-            console.log(error);
-        }
+    if (location.state == null) {
+        return <Redirect to="/" />
     }
 
     return (
@@ -69,14 +68,14 @@ const Index = () => {
                     <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 ">
                         <div className="form-group border-bottom">
                             <label># Ticket</label>
-                            <p className="lead">#895623</p>
+                            <p className="lead">{isSuccess && data.ticket}</p>
                         </div>
                     </div>
 
                     <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div className="form-group border-bottom">
                             <label>Estado</label>
-                            <p className="lead"><span className="badge badge-success">Abierto</span></p>
+                            <p className="lead"><span className="badge badge-success">{isSuccess && data.estado}</span></p>
                         </div>
                     </div>
                 </div>
@@ -85,7 +84,7 @@ const Index = () => {
                     <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 ">
                         <div className="form-group border-bottom">
                             <label>Reportado por:</label>
-                            <p className="lead">QUINTANA ORE, YANG YHONATAN</p>
+                            <p className="lead">{isSuccess && data.estudiante}</p>
                         </div>
                     </div>
 
@@ -110,7 +109,7 @@ const Index = () => {
                     <div className="col">
                         <div className="form-group border-bottom">
                             <label>Tipo:</label>
-                            <p className="lead">Orientación</p>
+                            <p className="lead">{isSuccess && data.tipoConsulta}</p>
                         </div>
                     </div>
                 </div>

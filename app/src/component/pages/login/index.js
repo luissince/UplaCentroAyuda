@@ -1,13 +1,17 @@
 import React, { useRef, useState } from "react";
+import { Redirect } from 'react-router-dom';
+
 import { getLogin } from '../../../api/rutas';
 
 import { useDispatch } from 'react-redux';
 import { login } from '../../../store/authSlice';
 
+import { useSelector } from 'react-redux';
+
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { images } from '../../../constants/';
 
-const Index = () => {
+const Index = (props) => {
 
     const [codigo, setCodigo] = useState('');
     const [clave, setClave] = useState('');
@@ -17,7 +21,8 @@ const Index = () => {
     const refCodigo = useRef(null);
     const refClave = useRef(null);
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const authentication = useSelector((state) => state.authentication.authentication)
 
     const onEventLogin = async () => {
         if (codigo == "") {
@@ -40,7 +45,8 @@ const Index = () => {
                 "clave": clave
             })
 
-            dispatch(login({ user: request.data }))
+            dispatch(login({ user: request.data }));
+            props.history.push("inicio");
         } catch (error) {
             setProcess(false);
             if (error.response) {
@@ -49,6 +55,10 @@ const Index = () => {
                 setMessage("Se produjo un error de conexión, intente nuevamente.");
             }
         }
+    }
+   
+    if (authentication) {
+        return <Redirect to="/inicio" />
     }
 
     return <>

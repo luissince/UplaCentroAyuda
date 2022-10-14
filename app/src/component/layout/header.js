@@ -1,14 +1,13 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link,useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 
 import { logout } from '../../store/authSlice';
 import { add, clear } from '../../store/notifeSlice';
 import { images, sounds } from '../../constants';
 
-const Header = () => {
+const Header = (props) => {
 
-    let navigate = useNavigate();
 
     const authentication = useSelector((state) => state.authentication);
     const notifications = useSelector((state) => state.notifications.notifications);
@@ -27,7 +26,7 @@ const Header = () => {
     const onEventCloseSession = () => {
         dispatch(logout())
         dispatch(clear());
-        navigate("/");
+        props.history.push("/");
     }
 
     return (

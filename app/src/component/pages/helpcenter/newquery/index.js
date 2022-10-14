@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { addConsult } from '../../../../api/rutas';
-import { useNavigate } from "react-router-dom";
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 import {
@@ -16,8 +15,7 @@ import { filterStudent } from '../../../../api/rutas';
 
 import SearchStudent from "../../../part/search_student";
 
-const Index = () => {
-
+const Index = (props) => {
     const selectItem = useRef(false);
     const filter = useRef(false);
     
@@ -39,9 +37,12 @@ const Index = () => {
 
     const authentication = useSelector((state) => state.authentication);
 
-    const navigate = useNavigate();
-
     const onEventSendTicket = async () => {
+        if(idStudent == ""){
+            refStudent.current.focus();
+            return;
+        }
+
         if (asunto.length == 0) {
             refAsunto.current.focus();
             return;
@@ -81,15 +82,15 @@ const Index = () => {
                     "descripcion": descripcion,
                     "estado": 1,
                     "files": newArray,
-                    "idStudent": idStudent,
+                    "Est_Id": idStudent,
                     "c_cod_usuario": authentication.user.docNumId,
                     "token": authentication.user.token
                 });
 
                 ModalAlertSuccess("Consulta", request.data.message, () => {
-                    navigate("/response", {
-                        replace: true,
-                        state: {
+                    props.history.push({
+                        pathname: `${props.match.path}/response`,
+                             state: {
                             "idConsulta": request.data.idConsulta,
                             "token": authentication.user.token
                         }
@@ -197,7 +198,7 @@ const Index = () => {
 
 
                 <SearchStudent
-                    placeholder="Escribe para iniciar a filtrar el estudiante..."
+                    placeholder="Escribe para iniciar a filtrar al estudiante..."
                     refStudent={refStudent}
                     student={student}
                     filteredData={filteredData}

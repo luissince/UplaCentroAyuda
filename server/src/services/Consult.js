@@ -52,17 +52,32 @@ class Consult {
     async id(req, res) {
         try {
             const consulta = await conec.query(`SELECT
-            idConsulta,
-            asunto,
-            tipoConsulta,
-            contacto,
-            descripcion,
-            estado,
-            format(fecha,'yyyy/MM/dd') AS fecha,
-            convert(varchar,hora,14) AS hora,
-            c_cod_usuario
+            co.idConsulta,
+            iif(LEN(CAST(co.ticket AS varchar)) <6, replicate('0',6-len(cast(co.ticket as varchar )))+cast(co.ticket  as varchar),CAST(co.ticket AS VARCHAR)) AS ticket,
+            concat(es.Est_Nombre,', ',es.Est_Paterno,' ',es.Est_Materno) AS estudiante,      
+            co.asunto,
+            CASE
+                WHEN co.tipoConsulta = 1 THEN 'ATENCIÓN'
+                WHEN co.tipoConsulta = 1 THEN 'INCIDENCIA'
+                WHEN co.tipoConsulta = 1 THEN 'ORIENTACIÓN'
+                WHEN co.tipoConsulta = 1 THEN 'QUEJA O RECLAMO'
+                WHEN co.tipoConsulta = 1 THEN 'SUGERENCIA'
+            END AS tipoConsulta,
+            co.contacto,
+            co.descripcion,
+            CASE 
+                WHEN co.estado = 1 THEN 'PENDIENTE'
+                WHEN co.estado = 2 THEN 'PROGRESO'
+                WHEN co.estado = 3 THEN 'RESULTO'
+                WHEN co.estado = 4 THEN 'CERRADOS'
+                ELSE 'CANCELADO'
+            END AS estado,
+            format(co.fecha,'yyyy/MM/dd') AS fecha,
+            convert(varchar,co.hora,14) AS hora,
+            co.c_cod_usuario
             FROM 
-            Soporte.Consulta 
+            Soporte.Consulta AS co 
+            INNER JOIN Est_Estudiante AS es ON es.Est_Id = co.Est_Id
             WHERE idConsulta = ?`, [
                 req.params.id
             ]);
@@ -73,6 +88,7 @@ class Consult {
                 return sendClient(res, "Consulta no encontrado.");
             }
         } catch (error) {
+            console.log(error);
             return sendError(res, "Se produjo un error de servidor, intente nuevamente.");
         }
     }
@@ -82,11 +98,11 @@ class Consult {
         try {
             connection = await conec.beginTransaction();
 
-            const result = await conec.execute(connection, 'SELECT idConsulta FROM Soporte.Consulta');
+            const resultConsulta = await conec.execute(connection, 'SELECT idConsulta FROM Soporte.Consulta');
             let idConsulta = "";
-            if (result.length != 0) {
+            if (resultConsulta.length != 0) {
 
-                let quitarValor = result.map(function (item) {
+                let quitarValor = resultConsulta.map(function (item) {
                     return parseInt(item.idConsulta.replace("CS", ''));
                 });
 
@@ -108,8 +124,25 @@ class Consult {
                 idConsulta = "CS0001";
             }
 
+            const resultTicket = await conec.execute(connection, 'SELECT ticket FROM Soporte.Consulta');
+            let ticket = 0;
+            if (resultTicket.length != 0) {
+
+                let quitarValor = resultTicket.map(function (item) {
+                    return parseInt(item.ticket);
+                });
+
+                let valorActual = Math.max(...quitarValor);
+                let incremental = valorActual + 1;
+    
+                ticket = incremental;
+            } else {
+                ticket = 1;
+            }
+          
             await conec.execute(connection, `INSERT INTO Soporte.Consulta(
             idConsulta,
+            ticket,
             asunto,
             tipoConsulta,
             contacto,
@@ -117,14 +150,17 @@ class Consult {
             estado,
             fecha,
             hora,
+            Est_Id,
             c_cod_usuario) 
-            VALUES(?,?,?,?,?,?,GETDATE(),GETDATE(),?)`, [
+            VALUES(?,?,?,?,?,?,?,GETDATE(),GETDATE(),?,?)`, [
                 idConsulta,
+                ticket,
                 req.body.asunto,
                 req.body.tipoConsulta,
                 req.body.contacto,
                 req.body.descripcion,
                 req.body.estado,
+                req.body.Est_Id,
                 req.body.c_cod_usuario,
             ]);
 
@@ -171,6 +207,7 @@ class Consult {
             await conec.commit(connection);
             return sendSuccess(res, { "idConsulta": idConsulta, "message": "Se regitró correctamente la consulta." });
         } catch (error) {
+            console.log(error);
             if (connection != null) {
                 await conec.rollback(connection);
             }

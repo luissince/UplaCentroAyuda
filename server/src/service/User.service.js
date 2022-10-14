@@ -1,12 +1,9 @@
 const { sendSuccess, sendError, sendClient } = require('../tools/Message');
 const { SHA1, MD5 } = require('../tools/Tools');
 const { createToken } = require('../tools/Jwt');
-const conec = require('../database/Conexion');
+const conec = require('../tools/Conexion');
 
-/**
- * 
- */
-class User {
+class UserService {
 
     /**
      * 
@@ -43,7 +40,10 @@ class User {
      */
     async login(req, res) {
         try {
-            const validate = await conec.query(`SELECT c_cod_usuario,c_pas_usuario FROM seguridad.TM_Usuario 
+            const validate = await conec.query(`SELECT 
+            c_cod_usuario,
+            c_pas_usuario 
+            FROM seguridad.TM_Usuario 
             WHERE c_cod_usuario = ?`, [
                 req.body.codigo,
             ]);
@@ -52,29 +52,28 @@ class User {
                 return sendClient(res, "Datos incorrectos, intente nuevamente.");
             }
 
-            const password = SHA1("|#o5o34+-o/g+)d1)2"+MD5(req.body.clave));
+            const password = SHA1("|#o5o34+-o/g+)d1)2" + MD5(req.body.clave));
 
-            const xml = "<Autentificar><usuario>"+req.body.codigo+ "</usuario><contrasena>"+password+"</contrasena></Autentificar>";
+            const xml = "<Autentificar><usuario>" + req.body.codigo + "</usuario><contrasena>" + password + "</contrasena></Autentificar>";
 
-            const passValidate = await conec.procedure("seguridad.paCon_AutentificarUsuariocr",[
-                {                  
-                    "name":"xml",
-                    "data":xml
+            const passValidate = await conec.procedure("seguridad.paCon_AutentificarUsuariocr", [
+                {
+                    "name": "xml",
+                    "data": xml
                 }
             ]);
 
-            if(passValidate[0].rpta != "Correcto"){
+            if (passValidate[0].rpta != "Correcto") {
                 return sendClient(res, "Datos incorrectos, intente nuevamente.");
             }
 
-            const token = await createToken({"idUsuario": passValidate[0].docNumId});
+            const token = await createToken({ "idUsuario": passValidate[0].docNumId });
 
             return sendSuccess(res, { ...passValidate[0], token });
         } catch (error) {
             return sendError(res, "Se produjo un error de servidor, intente nuevamente.");
         }
     }
-
 }
 
-module.exports = new User();
+module.exports = new UserService();

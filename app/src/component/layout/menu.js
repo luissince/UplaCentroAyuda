@@ -1,8 +1,8 @@
 import React from "react";
-import { NavLink } from 'react-router-dom';
-import {images } from '../../constants';
+import { Link } from 'react-router-dom';
+import { images } from '../../constants';
 
-const Menu = ({url}) => {
+const Menu = ({ url }) => {
 
     const treeViewMenu = (event) => {
         event.preventDefault();
@@ -33,10 +33,10 @@ const Menu = ({url}) => {
             <ul className="app-menu">
 
                 <li>
-                    <NavLink className="app-menu__item" id="tab-index" to={`${url}/`}>
+                    <Link className="app-menu__item" id="tab-index" to={`${url}/`}>
                         <i className="app-menu__icon fa fa-home"></i>
                         <span className="app-menu__label">Inicio</span>
-                    </NavLink>
+                    </Link>
                 </li>
 
                 <li className="treeview" id="treeview-ingresos">
@@ -52,8 +52,18 @@ const Menu = ({url}) => {
                         <i className="treeview-indicator fa fa-angle-right"></i>
                     </a>
                     <ul className="treeview-menu">
-                        <li><NavLink className="app-menu__item" id="tab-ventas" to={`${url}/new`}><i className="app-menu__icon fa fa-circle-o"></i><span className="app-menu__label">Nueva consulta</span></NavLink></li>
-                        <li><NavLink className="app-menu__item" id="tab-pago" to={`${url}/state`}><i className="app-menu__icon fa fa-circle-o"></i><span className="app-menu__label">Estado consulta</span></NavLink></li>
+                        <li>
+                            <Link className="app-menu__item" id="tab-ventas" to={`${url}/new`}>
+                                <i className="app-menu__icon fa fa-circle-o"></i>
+                                <span className="app-menu__label">Nueva consulta</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link className="app-menu__item" id="tab-pago" to={`${url}/state`}>
+                                <i className="app-menu__icon fa fa-circle-o"></i>
+                                <span className="app-menu__label">Estado consulta</span>
+                            </Link>
+                        </li>
                     </ul>
                 </li>
             </ul>

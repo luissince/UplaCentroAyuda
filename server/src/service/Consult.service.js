@@ -1,10 +1,16 @@
 const path = require("path");
 const { sendSuccess, sendError, sendClient } = require('../tools/Message');
-const conec = require('../database/Conexion');
-const { isDirectory, isFile, removeFile, createFile, mkdir, chmod } = require('../tools/Tools');
+const conec = require('../tools/Conexion');
+const { isDirectory, createFile, mkdir, chmod } = require('../tools/Tools');
 
 class Consult {
 
+    /**
+     * 
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
     async all(req, res) {
         try {
             const list = await conec.query(`SELECT * FROM Soporte.Consulta`,);
@@ -15,6 +21,12 @@ class Consult {
         }
     }
 
+    /**
+     * 
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
     async list(req, res) {
         try {
             const list = await conec.query(`SELECT
@@ -93,6 +105,12 @@ class Consult {
         }
     }
 
+    /**
+     * 
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
     async add(req, res) {
         let connection = null;
         try {

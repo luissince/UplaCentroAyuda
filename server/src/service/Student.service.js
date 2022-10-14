@@ -1,5 +1,5 @@
 const { sendSuccess, sendError } = require('../tools/Message');
-const conec = require('../database/Conexion');
+const conec = require('../tools/Conexion');
 
 class Student {
 

@@ -81,6 +81,22 @@ export function fileExtension(fileName) {
   return fileName.split("?")[0].split("#")[0].split(".").pop();
 }
 
+export function keyUpSearch(event, callback) {
+  if (event.key !== "Tab"
+    && event.key !== "Backspace"
+    && event.key !== "Control"
+    && event.key !== "AltRight"
+    && (event.key !== "Control" && event.key !== "AltRight")
+    && (event.key !== "Control" && event.key !== "c")
+    && event.key !== "Alt"
+    && event.key !== "ArrowRight"
+    && event.key !== "ArrowLeft"
+    && event.key !== "ArrowDown"
+    && event.key !== "ArrowUp") {
+    callback();
+  }
+}
+
 export function monthName(month) {
   let months = [
     "Enero",

@@ -27,9 +27,9 @@ class Factory {
     }
 
     router() {
-        app.use(express.static(path.join(__dirname, "../..", "app/build")));
+        app.use(express.static(path.join(__dirname, "../../", "app/build")));
         app.use(require('./module/Module'));
-        app.use((_, res) => res.sendFile(path.join(__dirname, "../..", "app/build", "index.html")));
+        app.use((_, res) => res.sendFile(path.join(__dirname, "../../", "app/build", "index.html")));
     }
 
     listen(port) {

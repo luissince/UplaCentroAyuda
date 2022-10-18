@@ -2,6 +2,7 @@ const { sendSuccess, sendError, sendClient } = require('../tools/Message');
 const { SHA1, MD5 } = require('../tools/Tools');
 const { createToken } = require('../tools/Jwt');
 const conec = require('../tools/Conexion');
+require('dotenv').config();
 
 class UserService {
 
@@ -71,7 +72,7 @@ class UserService {
 
             return sendSuccess(res, { ...passValidate[0], token });
         } catch (error) {
-            return sendError(res, "Se produjo un error de servidor, intente nuevamente.");
+            return sendError(res, "Se produjo un error de servidor, intente nuevamente. "+process.env.HOST);
         }
     }
 }

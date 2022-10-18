@@ -3,6 +3,11 @@ const router = Router();
 const { token, verifyToken } = require('../tools/Jwt');
 
 /**
+ * Validar Api
+ */
+router.get('/api', async (req, res) => res.send("API OKEY"));
+
+/**
  * Modulo de Usuarios
  */
 const userController = require('../controller/User.controller');

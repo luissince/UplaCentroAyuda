@@ -30,6 +30,6 @@ router.get('/api/consult/:id', token, verifyToken, consultController.id);
  */
 const studentController = require('../controller/Student.controller');
 
-router.get('/api/student', token, verifyToken, studentController.filter);
+router.get('/api/student/filter/:data', token, verifyToken, studentController.filter);
 
 module.exports = router;

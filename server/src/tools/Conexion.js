@@ -37,10 +37,14 @@ class Conexion {
                 let result = await pool.query(slq);
                 resolve(result.recordset);
             } catch (err) {
-                if (err.originalError) {
-                    reject(err.originalError.info.message);
-                } else if (err.precedingErrors) {
-                    reject(err.precedingErrors[0].originalError.info.message);
+                if (err) {
+                    if (err.message) {
+                        reject(err.message);
+                    } else if (err.originalError) {
+                        reject(err.originalError.info.message);
+                    } else if (err.precedingErrors) {
+                        reject(err.precedingErrors[0].originalError.info.message);
+                    }
                 } else {
                     reject("Problemas con la sintaxis.");
                 }
@@ -74,10 +78,14 @@ class Conexion {
                 const result = await request.execute(slq);
                 resolve(result.recordset);
             } catch (err) {
-                if (err.originalError) {
-                    reject(err.originalError.info.message);
-                } else if (err.precedingErrors) {
-                    reject(err.precedingErrors[0].originalError.info.message);
+                if (err) {
+                    if (err.message) {
+                        reject(err.message);
+                    } else if (err.originalError) {
+                        reject(err.originalError.info.message);
+                    } else if (err.precedingErrors) {
+                        reject(err.precedingErrors[0].originalError.info.message);
+                    }
                 } else {
                     reject("Problemas con la sintaxis.");
                 }
@@ -116,10 +124,14 @@ class Conexion {
                 let result = await connection.request().query(slq);
                 resolve(result.recordset);
             } catch (err) {
-                if (err.originalError) {
-                    reject(err.originalError.info.message);
-                } else if (err.precedingErrors) {
-                    reject(err.precedingErrors[0].originalError.info.message);
+                if (err) {
+                    if (err.message) {
+                        reject(err.message);
+                    } else if (err.originalError) {
+                        reject(err.originalError.info.message);
+                    } else if (err.precedingErrors) {
+                        reject(err.precedingErrors[0].originalError.info.message);
+                    }
                 } else {
                     reject("Problemas con la sintaxis.");
                 }

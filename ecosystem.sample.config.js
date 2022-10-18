@@ -16,6 +16,7 @@ module.exports = {
                 "DATABASE": "",
                 "PORTHOST": 3306,
                 "TZ": "America/Lima",
+                "TOKEN": "",
                 "NODE_ENV": "production",
             }
         }

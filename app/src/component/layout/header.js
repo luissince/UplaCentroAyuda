@@ -8,7 +8,6 @@ import { images, sounds } from '../../constants';
 
 const Header = (props) => {
 
-
     const authentication = useSelector((state) => state.authentication);
     const notifications = useSelector((state) => state.notifications.notifications);
 
@@ -99,7 +98,7 @@ const Header = (props) => {
                         <li className="user-header">
                             <img src={images.usuario} className="img-circle" alt="Usuario" />
                             <p>
-                                <span>{authentication.user.nombres + ", " + authentication.user.apellidos}</span>
+                                <span>{authentication.user.persNombre + ", " + authentication.user.persPaterno+" "+authentication.user.persMaterno}</span>
                                 <small> <i></i> Administrador</small>
                             </p>
                         </li>

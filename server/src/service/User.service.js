@@ -70,6 +70,7 @@ class UserService {
 
             const token = await createToken({ "idUsuario": passValidate[0].docNumId });
 
+            global.io.emit('message', `Cliente actualizado :D`);
             return sendSuccess(res, { ...passValidate[0], token });
         } catch (error) {
             return sendError(res, "Se produjo un error de servidor, intente nuevamente. "+process.env.HOST);

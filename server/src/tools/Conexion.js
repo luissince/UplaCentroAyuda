@@ -41,6 +41,7 @@ class Conexion {
                     if (err.message) {
                         reject(err.message);
                     } else if (err.originalError) {
+                        console.log(err.originalError)
                         reject(err.originalError.info.message);
                     } else if (err.precedingErrors) {
                         reject(err.precedingErrors[0].originalError.info.message);

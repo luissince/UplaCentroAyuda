@@ -21,15 +21,17 @@ router.post('/api/user/login', userController.login);
  */
 const consultController = require('../controller/Consult.controller');
 
-router.get('/api/consult/', token, verifyToken, consultController.all);
+// router.get('/api/consult/', token, verifyToken, consultController.all);
 
-router.get('/api/consult/:posicionPagina/:filasPorPagina', token, verifyToken, consultController.list);
+router.get('/api/consult', token, verifyToken, consultController.list);
 
 router.post('/api/consult/', token, verifyToken, consultController.add);
 
-router.get('/api/consult/:id', token, verifyToken, consultController.id);
+router.get('/api/consult/id', token, verifyToken, consultController.id);
 
-/**
+router.get('/api/consult/send', token, verifyToken, consultController.send);
+
+/** 
  * Modulo de estudiante
  * 
  */

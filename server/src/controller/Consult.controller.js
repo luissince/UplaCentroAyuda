@@ -10,4 +10,6 @@ consultController.id = async (req, res) => consult.id(req, res);
 
 consultController.add = async (req, res) => consult.add(req, res);
 
+consultController.send = async (req, res) => consult.send(req, res);
+
 module.exports = consultController;

@@ -1,6 +1,68 @@
+import React, { useState, useEffect, useRef } from 'react'
+import { useSelector } from 'react-redux';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 
+import { listConsult,sendConsulta } from '../../../../api/rutas';
 
 const Index = () => {
+
+    const [loading, setLoading] = useState(false);
+    const [lista, setLista] = useState([]);
+    const [restart, setRestart] = useState(false);
+
+    // const [paginacion, setPaginacion] = useState(0);
+    const paginacion = useRef(0);
+    const [totalPaginacion, setTotalPaginacion] = useState(0);
+    const [filasPorPagina, setFilasPorPagina] = useState(10);
+    const messageTable = useRef('Cargando información...');
+    const messagePaginacion = useRef('Mostranto 0 de 0 Páginas');
+
+    const authentication = useSelector((state) => state.authentication);
+
+    useEffect(() => {
+
+        loadInit();
+    }, []);
+
+    const loadInit = async () => {
+        if (loading) return;
+
+        paginacion.current = 1;
+        setRestart(true);
+
+        fillTable();
+
+    }
+
+    const fillTable = async (opcion, buscar) => {
+        try {
+            setLoading(true);
+            setLista([]);
+
+            const response = await listConsult({
+                posicionPagina: ((paginacion.current - 1) * filasPorPagina),
+                filasPorPagina: filasPorPagina
+            }, authentication.user.token);
+
+            console.log(response.data)
+            setLista(response.data.result);
+            setLoading(false);
+        } catch (error) {
+            setLista([]);
+            setLoading(false);
+            messageTable.current = "Se produjo un error interno, intente nuevamente por favor.";
+            messagePaginacion.current = "Mostranto 0 de 0 Páginas";
+        }
+    }
+
+    const onEventCambiar = async (event) => {
+        try{
+            const response = await sendConsulta(authentication.user.token);
+            NotificationManager.warning("Cambio envíado.", "");
+        }catch(error){
+
+        }
+    }
 
     return (
         <>
@@ -9,7 +71,7 @@ const Index = () => {
             </div>
 
             <div className="row">
-                <div className="col-md-3">
+                {/* <div className="col-md-3">
                     <button className="mb-2 btn btn-primary btn-block" >asd</button>
 
                     <div className="tile p-0">
@@ -34,8 +96,8 @@ const Index = () => {
                             </ul>
                         </div>
                     </div>
-                </div>
-                <div className="col-md-9">
+                </div> */}
+                <div className="col-md-12">
                     <div className="tile">
                         <div className="mailbox-controls b-0">
                             <div className="btn-group">
@@ -56,20 +118,39 @@ const Index = () => {
                                             <th>Tipo</th>
                                             <th>Estado</th>
                                             <th>Creado</th>
+                                            <th>Cambiar</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* <tr>
-                                            <td className="text-center">La bandeja de consultas con estado "Pendiente" está vacía.</td>
-                                        </tr> */}
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Asunto</td>
-                                            <td className="mail-subject">Descripción</td>
-                                            <td>Tipo</td>
-                                            <td>Estado</td>
-                                            <td>Creado</td>
+                                        {
+                                            loading ?
+                                            <tr className="text-center">
+                                            <td colSpan="7">{messageTable.current}</td>
                                         </tr>
+                                            :
+                                            lista.length == 0 ?
+                                                <tr className="text-center">
+                                                    <td colSpan="7">{messageTable.current}</td>
+                                                </tr>
+                                                :
+                                                lista.map((item, index) => (
+                                                    <tr key={index}>
+                                                        <td className="text-center">{item.id}</td>
+                                                        <td>{item.asunto}</td>
+                                                        <td className="mail-subject">{item.descripcion}</td>
+                                                        <td>{item.tipoConsulta}</td>
+                                                        <td>{item.estado}</td>
+                                                        <td>{item.estudiante}</td>
+                                                        <td className="text-center">
+                                                            <button 
+                                                            className="btn btn-warning"
+                                                            onClick={onEventCambiar}>
+                                                                <i className="fa fa-edit"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                        }
                                     </tbody>
                                 </table>
                             </div>
@@ -114,6 +195,7 @@ const Index = () => {
 
 
             {/* </div> */}
+            <NotificationContainer />
         </>
     );
 }

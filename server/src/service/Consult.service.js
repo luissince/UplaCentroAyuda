@@ -30,30 +30,50 @@ class Consult {
     async list(req, res) {
         try {
             const list = await conec.query(`SELECT
-            idConsulta,
-            asunto,
-            tipoConsulta,
-            contacto,
-            descripcion,
-            estado,
-            FORMAT(fecha,'yyyy-MM-dd') AS fecha,
-            hora
-            FROM Soporte.Consulta
-            ORDER BY fecha DESC, hora DESC
-            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY`, [
-                parseInt(req.params.posicionPagina),
-                parseInt(req.params.filasPorPagina),
+            co.idConsulta,
+            iif(LEN(CAST(co.ticket AS varchar)) <6, replicate('0',6-len(cast(co.ticket as varchar )))+cast(co.ticket  as varchar),CAST(co.ticket AS VARCHAR)) AS ticket,
+            concat(es.Est_Nombre,', ',es.Est_Paterno,' ',es.Est_Materno) AS estudiante,      
+            co.asunto,
+            CASE
+                WHEN co.tipoConsulta = 1 THEN 'ATENCIÓN'
+                WHEN co.tipoConsulta = 1 THEN 'INCIDENCIA'
+                WHEN co.tipoConsulta = 1 THEN 'ORIENTACIÓN'
+                WHEN co.tipoConsulta = 1 THEN 'QUEJA O RECLAMO'
+                WHEN co.tipoConsulta = 1 THEN 'SUGERENCIA'
+            END AS tipoConsulta,
+            co.contacto,
+            co.descripcion,
+            CASE 
+                WHEN co.estado = 1 THEN 'PENDIENTE'
+                WHEN co.estado = 2 THEN 'PROGRESO'
+                WHEN co.estado = 3 THEN 'RESULTO'
+                WHEN co.estado = 4 THEN 'CERRADOS'
+                ELSE 'CANCELADO'
+            END AS estado,
+            format(co.fecha,'yyyy/MM/dd') AS fecha,
+            convert(varchar,co.hora,14) AS hora,
+            co.c_cod_usuario
+            FROM 
+            Soporte.Consulta AS co 
+            INNER JOIN Est_Estudiante AS es ON es.Est_Id = co.Est_Id
+            ORDER BY co.fecha DESC, co.hora DESC
+			OFFSET ? ROWS FETCH NEXT ? ROWS ONLY`, [
+                parseInt(req.query.posicionPagina),
+                parseInt(req.query.filasPorPagina),
             ]);
 
 
             let resultList = list.map(function (item, index) {
                 return {
                     ...item,
-                    id: (index + 1) + parseInt(req.params.posicionPagina)
+                    id: (index + 1) + parseInt(req.query.posicionPagina)
                 }
             });
 
-            const total = await conec.query(`SELECT COUNT(*) AS total FROM Soporte.Consulta`,);
+            const total = await conec.query(`SELECT COUNT(*) AS total
+            FROM 
+            Soporte.Consulta AS co 
+            INNER JOIN Est_Estudiante AS es ON es.Est_Id = co.Est_Id`,);
 
             return sendSuccess(res, { "result": resultList, "total": total[0].total });
         } catch (error) {
@@ -91,13 +111,13 @@ class Consult {
             Soporte.Consulta AS co 
             INNER JOIN Est_Estudiante AS es ON es.Est_Id = co.Est_Id
             WHERE idConsulta = ?`, [
-                req.params.id
+                req.query.idConsulta
             ]);
 
             if (consulta.length > 0) {
                 return sendSuccess(res, consulta[0]);
             } else {
-                return sendClient(res, "Consulta no encontrado.");
+                return sendClient(res, "Consulta no encontrada.");
             }
         } catch (error) {
             console.log(error);
@@ -233,6 +253,16 @@ class Consult {
         } finally {
             if (connection != null) connection.parent.close();
         }
+    }
+ 
+    /**
+     * 
+     * @param {*} req 
+     * @param {*} res 
+     */
+    async send(req, res){
+        global.io.emit('message', `Notificación al usuario.`);
+        return sendSuccess(res, "Mensaje de cambio...");
     }
 
 

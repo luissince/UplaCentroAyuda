@@ -18,54 +18,63 @@ import SearchStudent from "../../../part/search_student";
 const Index = (props) => {
     const selectItem = useRef(false);
     const filter = useRef(false);
-    
-    const [idStudent,setIdStudent] = useState('');
+
+    const [idStudent, setIdStudent] = useState('');
     const [student, setStudent] = useState('');
     const [filteredData, setFilteredData] = useState([]);
     const [asunto, setAsunto] = useState('');
     const [tipoConsulta, setTipoConsulta] = useState('');
-    const [contacto, setContacto] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [files, setFiles] = useState([]);
 
     const refStudent = useRef(null);
     const refAsunto = useRef(null);
     const refTipoConsulta = useRef(null);
-    const refContacto = useRef(null);
     const refDescripcion = useRef(null);
     const refAdjuntar = useRef(null);
 
     const authentication = useSelector((state) => state.authentication);
 
     const onEventSendTicket = async () => {
-        if(idStudent == ""){
+        if (idStudent == "") {
+            NotificationManager.warning("Seleccione un estudiante.", "Centro de Ayuda");
             refStudent.current.focus();
             return;
         }
 
-        if (asunto.length == 0) {
+        if (asunto.trim().length == 0) {
+            NotificationManager.warning("Ingrese el asunto por favor.", "Centro de Ayuda");
             refAsunto.current.focus();
             return;
         }
 
-        if (tipoConsulta.length == 0) {
+        if (asunto.trim().length < 20) {
+            NotificationManager.warning("El asunto tiene que tener un mínimo de 20 caracteres.", "Centro de Ayuda");
+            refAsunto.current.focus();
+            return;
+        }
+
+        if (tipoConsulta.trim().length == 0) {
+            NotificationManager.warning("Seleccione el tipo de consulta.", "Centro de Ayuda");
             refTipoConsulta.current.focus();
             return;
         }
 
-        if (contacto.length == 0) {
-            refContacto.current.focus();
-            return;
-        }
-
-        if (descripcion.length == 0) {
+        if (descripcion.trim().length == 0) {
+            NotificationManager.warning("Ingrese la descripción del asunto por favor.", "Centro de Ayuda");
             refDescripcion.current.focus();
             return;
         }
 
-        ModalAlertDialog("Consulta", "¿Está seguro de continuar?", async () => {
+        if (descripcion.trim().length < 40) {
+            NotificationManager.warning("La descripción del asunto debe tener un mínimo de 40 caracteres.", "Centro de Ayuda");
+            refDescripcion.current.focus();
+            return;
+        }
+
+        ModalAlertDialog("Centro de Ayuda", "¿Está seguro de continuar?", async () => {
             try {
-                ModalAlertInfo("Consulta", "Procesando registro...");
+                ModalAlertInfo("Centro de Ayuda", "Procesando registro...");
 
                 const newArray = [];
                 for (const value of files) {
@@ -75,11 +84,10 @@ const Index = (props) => {
                     }
                 }
 
-                const request = await addConsult({
-                    "asunto": asunto,
+                const response = await addConsult({
+                    "asunto": asunto.trim(),
                     "tipoConsulta": tipoConsulta,
-                    "contacto": contacto,
-                    "descripcion": descripcion,
+                    "descripcion": descripcion.trim(),
                     "estado": 1,
                     "files": newArray,
                     "Est_Id": idStudent,
@@ -87,17 +95,17 @@ const Index = (props) => {
                     "token": authentication.user.token
                 });
 
-                ModalAlertSuccess("Consulta", request.data.message, () => {
+                ModalAlertSuccess("Centro de Ayuda", response.data.message, () => {
                     props.history.push({
                         pathname: `${props.match.path}/response`,
-                             state: {
-                            "idConsulta": request.data.idConsulta,
+                        state: {
+                            "idConsulta": response.data.idConsulta,
                             "token": authentication.user.token
                         }
                     });
                 });
             } catch (error) {
-                ModalAlertCatch("Consulta", error);
+                ModalAlertCatch("Centro de Ayuda", error);
             }
         });
     }
@@ -105,14 +113,14 @@ const Index = (props) => {
     const onEventFileLogo = async (event) => {
         if (event.target.files.length !== 0) {
             if (event.target.files[0].type !== "application/pdf") {
-                NotificationManager.warning("El archivo a subir tiene que ser formato pdf.", "Consulta");
+                NotificationManager.warning("El archivo a subir tiene que ser formato pdf.", "Centro de Ayuda");
             }
 
             const filterName = files.filter((element, index) => element.name === event.target.files[0].name);
             if (filterName.length == 0) {
                 setFiles(data => [...data, event.target.files]);
             } else {
-                NotificationManager.warning("Hay un archivo con el mismo nombre.", "Consulta");
+                NotificationManager.warning("Hay un archivo con el mismo nombre.", "Centro de Ayuda");
             }
         } else {
             refAdjuntar.current.value = "";
@@ -137,7 +145,7 @@ const Index = (props) => {
 
         filter.current = true;
 
-        const response = await filterStudent(searchWord,authentication.user.token);
+        const response = await filterStudent(searchWord, authentication.user.token);
         setFilteredData(response);
 
         filter.current = false;
@@ -234,19 +242,6 @@ const Index = (props) => {
                         <option value="4">Queja o reclamo</option>
                         <option value="5">Sugerencia</option>
                     </select>
-                </div>
-
-                {/* is-valid */}
-                <div className="form-group">
-                    <label className="control-label">Cel. / Tel.</label>
-                    <input
-                        className="form-control"
-                        type="text"
-                        placeholder="Ingrese un número para comunicarse."
-                        ref={refContacto}
-                        value={contacto}
-                        onChange={(event) => setContacto(event.target.value)}
-                    />
                 </div>
 
                 <div className="form-group">

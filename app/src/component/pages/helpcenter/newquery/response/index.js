@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { useLocation, Redirect } from 'react-router-dom';
 
@@ -8,25 +8,37 @@ import { timeForma24 } from '../../../../../constants/tools';
 const Index = (props) => {
     const location = useLocation();
 
-    const [isSuccess, setSuccess] = useState(false);
     const [isLoading, setLoading] = useState(true);
+    const [isSuccess, setSuccess] = useState(false);
     const [data, setData] = useState({});
+
+    const abortControlleData = useRef(new AbortController());
 
     useEffect(() => {
 
         const loadData = async () => {
             try {
-                const response = await getIdConsult(location.state.idConsulta, location.state.token);
+                const response = await getIdConsult(
+                    location.state.idConsulta,
+                    location.state.token,
+                    abortControlleData.current.signal
+                );
                 setData(response.data);
                 setSuccess(true);
                 setLoading(false);
             } catch (error) {
-                setSuccess(false);
-                setLoading(false);
+                if (error.message !== "canceled") {
+                    setSuccess(false);
+                    setLoading(false);
+                }
             }
         }
 
         loadData();
+
+        return () => {
+            abortControlleData.current.abort();
+        }
     }, []);
 
     if (location.state == null) {
@@ -91,7 +103,7 @@ const Index = (props) => {
                     <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div className="form-group border-bottom">
                             <label>Contacto</label>
-                            <p className="lead">{isSuccess && data.contacto}</p>
+                            <p className="lead">{isSuccess && data.celular}</p>
                         </div>
                     </div>
                 </div>
@@ -132,8 +144,6 @@ const Index = (props) => {
                     </div>
                 </div>
             </div>
-
-
         </>
     );
 }

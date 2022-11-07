@@ -6,7 +6,6 @@ function isEmail(value) {
     return value.match(validRegex) != null ? true : false;
 }
 
-
 const isNumber = (value) => Number.isInteger(value);
 
 async function isDirectory(file) {

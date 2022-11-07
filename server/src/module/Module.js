@@ -29,7 +29,11 @@ router.post('/api/consult/', token, verifyToken, consultController.add);
 
 router.get('/api/consult/id', token, verifyToken, consultController.id);
 
-router.get('/api/consult/send', token, verifyToken, consultController.send);
+router.post('/api/consult/send', token, verifyToken, consultController.sendConsult);
+
+router.get('/api/consult/list/byid/student', token, verifyToken, consultController.listConsultByIdStudent);
+
+router.get('/api/consult/detailt/byid/consult', token, verifyToken, consultController.listDetailtByIdConsult);
 
 /** 
  * Modulo de estudiante

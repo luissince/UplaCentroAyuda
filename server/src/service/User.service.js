@@ -53,13 +53,17 @@ class UserService {
                 return sendClient(res, "Datos incorrectos, intente nuevamente.");
             }
 
+            console.log(req.body)
+
             const password = SHA1("|#o5o34+-o/g+)d1)2" + MD5(req.body.clave));
 
-            const xml = "<Autentificar><usuario>" + req.body.codigo + "</usuario><contrasena>" + password + "</contrasena></Autentificar>";
+            const tokenFirebase = req.body.token == undefined || req.body.token == null ? ""  : req.body.token;
+
+            const xml = "<Autentificar><usuario>" + req.body.codigo + "</usuario><contrasena>" + password + "</contrasena><token>"+tokenFirebase+"</token></Autentificar>";
 
             const passValidate = await conec.procedure("seguridad.paCon_AutentificarUsuariocr", [
                 {
-                    "name": "xml",
+                    "name": "xml",  
                     "data": xml
                 }
             ]);

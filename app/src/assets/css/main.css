@@ -1947,7 +1947,7 @@ pre code {
   width: 100%;
   margin-bottom: 1rem;
   color: var(--dark);
-  cursor: pointer;
+  /* cursor: pointer; */
   /* border-width: 1px;
   border-style: dashed;
   border-color: var(--blue); */
@@ -16562,7 +16562,7 @@ be a descendant of the grid when it is being dragged.
 .mailbox-controls {
   margin-bottom: 10px;
   border-bottom: 1px solid #ddd;
-  padding: 0 0 10px 5px;
+  padding: 0 0 10px 0px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;

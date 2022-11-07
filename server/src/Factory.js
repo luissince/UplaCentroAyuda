@@ -4,6 +4,7 @@ const app = express();
 const path = require('path');
 const socket = require('socket.io');
 const cors = require('cors');
+const { adUser, removeUser, getUser } = require('./tools/User');
 
 class Factory {
 
@@ -15,15 +16,29 @@ class Factory {
         global.io = io;
 
         io.on('connection', (socket) => {
-            console.log('a user connected');
+            // console.log('a user connected', socket);
+            socket.on('join', (data) => {
+                console.log(data)
 
-            socket.on('message', (message) => {
-                console.log(message);
-                io.emit('message', `${socket.id.substr(0, 2)} said ${message}`);
-            });
-        
+                // const { user } = adUser({ id: data.Est_Id });
+                const { user } = adUser({ id: socket.id });
+                if (user) {
+                    socket.join(user.id);
+                }
+            })
+
+            // socket.on('message', (message) => {
+            //     console.log(message);
+            //     io.emit('message', `${socket.id.substr(0, 2)} said ${message}`);
+            // });
+
             socket.on("disconnect", () => {
                 console.log('desconnected ' + socket.id)
+                const user = removeUser(socket.id);
+                console.log(user)
+                if (user) {
+                    io.to(user.id).emit({ "message": "El id se fue " + user.id });
+                }
             });
         });
     }

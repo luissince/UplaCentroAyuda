@@ -8,8 +8,9 @@ axios.defaults.baseURL = process.env.REACT_APP_URL
  * @param {*} token 
  * @returns response
  */
-export function getIdConsult(idConsulta, token) {
+export function getIdConsult(idConsulta, token, signal) {
     return axios.get(`/api/consult/id`, {
+        signal: signal,
         params: {
             idConsulta: idConsulta
         },
@@ -64,10 +65,12 @@ export async function filterStudent(value, token) {
  * 
  * @param {*} object 
  * @param {*} token 
+ * @param {*} signal 
  * @returns 
  */
-export function listConsult(object, token) {
+export function listConsult(object, token, signal) {
     return axios.get(`/api/consult`, {
+        signal: signal,
         params: {
             posicionPagina: object.posicionPagina,
             filasPorPagina: object.filasPorPagina
@@ -80,14 +83,13 @@ export function listConsult(object, token) {
 
 /**
  * 
- * @param {*} object 
- * @param {*} token 
+ * @param {*} consult 
  * @returns 
  */
- export function sendConsulta( token) {
-    return axios.get(`/api/consult/send`, {
+export function sendConsulta(consult) {
+    return axios.post(`/api/consult/send`, consult, {
         headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${consult.token}`
         }
     });
 }

@@ -76,7 +76,8 @@ class UserService {
 
             return sendSuccess(res, { ...passValidate[0], token });
         } catch (error) {
-            return sendError(res, "Se produjo un error de servidor, intente nuevamente. "+process.env.HOST);
+            console.log(error);
+            return sendError(res, "Se produjo un error de servidor, intente nuevamente. ");
         }
     }
 }

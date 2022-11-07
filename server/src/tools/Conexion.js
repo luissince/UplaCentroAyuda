@@ -125,6 +125,7 @@ class Conexion {
                 let result = await connection.request().query(slq);
                 resolve(result.recordset);
             } catch (err) {
+                console.log(err)
                 if (err) {
                     if (err.message) {
                         reject(err.message);

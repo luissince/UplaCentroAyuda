@@ -286,7 +286,7 @@ class Consult {
                 fecha,
                 hora
             ) VALUES(?,?,?,?,GETDATE(),GETDATE())`, [
-                idRespuesta,
+                idRespuesta, 
                 req.body.idConsulta,
                 req.body.c_cod_usuario,
                 req.body.detalle,
@@ -416,7 +416,7 @@ class Consult {
             const respuestas = await conec.query(`select 
             detalle 
             from Soporte.Respuesta 
-            where idConsulta = ?`, [
+            where idConsulta = ?`, [ 
                 req.query.idConsulta
             ]);
             return sendSuccess(res, { "consulta": consulta[0], "respuestas": respuestas });

@@ -17,7 +17,7 @@ import {
 /**
  * 
  */
-const Index = () => {
+const StateQuery = () => {
 
     /**
      * Variables para mostrar en la tabla y validar el estado de la carga
@@ -460,4 +460,4 @@ const Index = () => {
     );
 }
 
-export default Index;
+export default StateQuery;

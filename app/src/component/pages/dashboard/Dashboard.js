@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Index = () => {
+const Dashboard = () => {
 
     // const { data, isLoading, isFetching, isSuccess } = useGetDashboardQuery(undefined, {
     //     refetchOnMountOrArgChange: false,
@@ -69,4 +69,4 @@ const Index = () => {
     );
 }
 
-export default Index;
+export default Dashboard;

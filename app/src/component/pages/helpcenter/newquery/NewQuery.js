@@ -15,7 +15,7 @@ import { filterStudent } from '../../../../api/rutas';
 
 import SearchStudent from "../../../part/search_student";
 
-const Index = (props) => {
+const NewQuery = (props) => {
     const selectItem = useRef(false);
     const filter = useRef(false);
 
@@ -304,4 +304,4 @@ const Index = (props) => {
     );
 }
 
-export default Index;
+export default NewQuery;

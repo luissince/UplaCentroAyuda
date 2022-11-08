@@ -13,22 +13,6 @@ class Consult {
      * @param {*} res 
      * @returns 
      */
-    async all(req, res) {
-        try {
-            const list = await conec.query(`SELECT * FROM Soporte.Consulta`,);
-            return sendSuccess(res, list);
-        } catch (error) {
-            console.log(error);
-            return sendError(res, "Se produjo un error de servidor, intente nuevamente.");
-        }
-    }
-
-    /**
-     * 
-     * @param {*} req 
-     * @param {*} res 
-     * @returns 
-     */
     async list(req, res) {
         try {
             const list = await conec.query(`SELECT

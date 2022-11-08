@@ -1,22 +1,38 @@
-import React from 'react';
+import React, { useEffect } from "react";
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
 
 import Menu from '../../layout/menu';
-import Header from '../../layout/header.js';
+import Header from '../../layout/header';
 
-import Welcome from '../../pages/welcome';
-import Dashboard from '../../pages/dashboard';
-import NewQuery from '../../pages/helpcenter/newquery';
-import ResponseQuery from '../../pages/helpcenter/newquery/response';
-import StateQuery from '../../pages/helpcenter/statequery';
-import NotFound from '../../pages/NotFound';
+import Welcome from '../welcome/Welcome';
+import Dashboard from '../dashboard/Dashboard';
+import NewQuery from '../helpcenter/newquery/NewQuery';
+import ResponseQuery from '../helpcenter/newquery/response/Response';
+import StateQuery from '../helpcenter/statequery/StateQuery';
+import NotFound from '../NotFound';
 
-const Index = (props) => {
+const Inicio = (props) => {
 
     const authentication = useSelector((state) => state.authentication.authentication)
 
+    useEffect(() => {
+
+        function onEventClick(event) {
+            let overlaySidebar = document.getElementsByClassName("app-sidebar__overlay")[0];
+            if (event.target === overlaySidebar) {
+                const app = document.getElementsByClassName('app');
+                app[0].classList.toggle('sidenav-toggled');
+            }
+        }
+
+        window.addEventListener('click', onEventClick);
+
+        return () => {
+            window.removeEventListener('click', onEventClick);
+        }
+    }, []);
 
     if (!authentication) {
         return <Redirect to="/login" />
@@ -26,9 +42,9 @@ const Index = (props) => {
 
     return (
         <>
-            <Header {...props}/>
+            <Header {...props} />
 
-            <Menu {...props} url={url}/>
+            <Menu {...props} url={url} />
 
             <main className="app-content">
                 <Switch>
@@ -73,4 +89,4 @@ const Index = (props) => {
     );
 }
 
-export default Index;
+export default Inicio;

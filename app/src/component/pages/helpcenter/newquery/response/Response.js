@@ -5,7 +5,7 @@ import { useLocation, Redirect } from 'react-router-dom';
 import { getIdConsult } from '../../../../../api/rutas';
 import { timeForma24 } from '../../../../../constants/tools';
 
-const Index = (props) => {
+const Response = (props) => {
     const location = useLocation();
 
     const [isLoading, setLoading] = useState(true);
@@ -148,4 +148,4 @@ const Index = (props) => {
     );
 }
 
-export default Index;
+export default Response;

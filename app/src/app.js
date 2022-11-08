@@ -1,34 +1,18 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Switch, Route,Redirect } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
 
-import Load from './component/pages/load';
+import Load from './component/pages/load/Load';
 import Login from './component/pages/login';
-import Inicio from './component/pages/inicio';
+import Inicio from './component/pages/inicio/Inicio';
 import NotFound from './component/pages/NotFound';
 
 function App() {
 
-    const loading = useSelector((state) => state.authentication.loading)
-    const authentication = useSelector((state) => state.authentication.authentication)
+    const loading = useSelector((state) => state.authentication.loading);
 
-    useEffect(() => {
 
-        function onEventClick(event) {
-            let overlaySidebar = document.getElementsByClassName("app-sidebar__overlay")[0];
-            if (event.target === overlaySidebar) {
-                const app = document.getElementsByClassName('app');
-                app[0].classList.toggle('sidenav-toggled')
-            }
-        }
-
-        window.addEventListener('click', onEventClick);
-
-        return () => {
-            window.removeEventListener('click', onEventClick);
-        }
-    }, []);
 
     return (
         <>
@@ -38,7 +22,6 @@ function App() {
                     :
                     <>
                         <Switch>
-
                             <Route
                                 path="/"
                                 exact={true}>

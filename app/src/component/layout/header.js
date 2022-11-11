@@ -12,11 +12,7 @@ const Header = (props) => {
     const notifications = useSelector((state) => state.notifications.notifications);
 
     const dispatch = useDispatch();
-
-    // const [count, setCount] = useState(0);
-    // const audio = useMemo(() => new Audio(sounds.mixkit), []);
-
-
+    
     const hideSidebar = () => {
         const app = document.getElementsByClassName('app');
         app[0].classList.toggle('sidenav-toggled');

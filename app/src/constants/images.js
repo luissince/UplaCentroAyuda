@@ -17,6 +17,7 @@ const search = require('../assets/images/search.png');
 const sunat_logo = require('../assets/images/sunat_logo.png');
 const logo = require('../assets/images/logo.png');
 const usuario = require('../assets/images/usuario.png');
+const loading = require('../assets/images/loading.gif');
 
 export default {
     accept,
@@ -40,4 +41,6 @@ export default {
     reuse,
     usuario,
     unable,
+
+    loading
 }

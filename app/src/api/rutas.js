@@ -93,3 +93,16 @@ export function sendConsulta(consult) {
         }
     });
 }
+
+/**
+ * 
+ * @param {*} consult 
+ * @returns 
+ */
+ export function validToken(token) {
+    return axios.get(`/api/user/token`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+}

@@ -12,11 +12,11 @@ router.get('/api', async (req, res) => res.send("API OKEY"));
  */
 const userController = require('../controller/User.controller');
 
-router.get('/api/user/:id', userController.id);
-
 router.post('/api/user/login', userController.login);
 
-/**
+router.get('/api/user/token', token, verifyToken, userController.token);
+
+/** 
  * Modulo de consultas
  */
 const consultController = require('../controller/Consult.controller');

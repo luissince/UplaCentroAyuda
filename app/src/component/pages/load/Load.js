@@ -1,24 +1,32 @@
 import React, { useEffect } from 'react';
 import '../../../assets/css/loader.css';
 import { useDispatch } from 'react-redux';
-import { restore } from '../../../store/authSlice';
+import { restore, starting } from '../../../store/authSlice';
+import { validToken } from '../../../api/rutas';
 
 const Load = () => {
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        const login = window.localStorage.getItem("login");
-        if (login == null) {
-            const user = null;
-            const authentication = false;
-            dispatch(restore({ user: user, authentication: authentication }));
-        } else {
-            const user = JSON.parse(login)
-            const authentication = true;
-            dispatch(restore({ user: user, authentication: authentication }));
-        }
+        valid();
     }, []);
+
+    const valid = async () => {
+        try {
+            const login = window.localStorage.getItem("login");
+            if (login == null) {
+                dispatch(starting());
+            } else {
+                await validToken(JSON.parse(login).token);
+                const user = JSON.parse(login)
+                const authentication = true;
+                dispatch(restore({ user: user, authentication: authentication }));
+            }
+        } catch (error) {
+            dispatch(starting());
+        }
+    }
 
     return (
         <>

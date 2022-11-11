@@ -6,6 +6,10 @@ require('dotenv').config();
 
 class UserService {
 
+    async token(req, res) {
+        return sendSuccess(res, "OK");
+    }
+
     /**
      * 
      * @param {*} req 
@@ -53,17 +57,15 @@ class UserService {
                 return sendClient(res, "Datos incorrectos, intente nuevamente.");
             }
 
-            console.log(req.body)
-
             const password = SHA1("|#o5o34+-o/g+)d1)2" + MD5(req.body.clave));
 
-            const tokenFirebase = req.body.token == undefined || req.body.token == null ? ""  : req.body.token;
+            const tokenFirebase = req.body.token == undefined || req.body.token == null ? "" : req.body.token;
 
-            const xml = "<Autentificar><usuario>" + req.body.codigo + "</usuario><contrasena>" + password + "</contrasena><token>"+tokenFirebase+"</token></Autentificar>";
+            const xml = "<Autentificar><usuario>" + req.body.codigo + "</usuario><contrasena>" + password + "</contrasena><token>" + tokenFirebase + "</token></Autentificar>";
 
             const passValidate = await conec.procedure("seguridad.paCon_AutentificarUsuariocr", [
                 {
-                    "name": "xml",  
+                    "name": "xml",
                     "data": xml
                 }
             ]);
@@ -76,7 +78,6 @@ class UserService {
 
             return sendSuccess(res, { ...passValidate[0], token });
         } catch (error) {
-            console.log(error);
             return sendError(res, "Se produjo un error de servidor, intente nuevamente. ");
         }
     }

@@ -12,8 +12,6 @@ function App() {
 
     const loading = useSelector((state) => state.authentication.loading);
 
-
-
     return (
         <>
             {

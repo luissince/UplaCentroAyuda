@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import {  starting } from '../../../../store/authSlice';
+
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 import { listConsult, sendConsulta, getIdConsult } from '../../../../api/rutas';
@@ -13,6 +16,8 @@ import {
     ModalAlertSuccess,
     ModalAlertCatch
 } from '../../../../constants/tools';
+
+import { images } from '../../../../constants/';
 
 /**
  * 
@@ -72,6 +77,11 @@ const StateQuery = () => {
      * Variable encargada de obtener el estado global de la aplicación usando redux
      */
     const authentication = useSelector((state) => state.authentication);
+
+    /**
+     * Varible encargada de ejecutar los eventos de redux
+     */
+    const dispatch = useDispatch();
 
     /**
      * useEffect es un hook que se encarga de obtener el cambio de una variable o 
@@ -140,6 +150,10 @@ const StateQuery = () => {
             messageTable.current = "No hay datos para mostrar.";
             setLoading(false);
         } catch (error) {
+            if(error.response.status === 403){
+                dispatch(starting());
+            }
+
             if (error.message !== "canceled") {
                 setList([]);
                 setLoading(false);
@@ -385,7 +399,7 @@ const StateQuery = () => {
                                         {
                                             loading ?
                                                 <tr className="text-center">
-                                                    <td colSpan="7">{messageTable.current}</td>
+                                                    <td colSpan="7"><img src={images.loading} id="imgLoad" width="34" height="34" /> <p>{messageTable.current}</p></td>
                                                 </tr>
                                                 :
                                                 list.length == 0 ?

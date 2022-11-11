@@ -10,7 +10,13 @@ export const authSlice = createSlice({
   name: 'authentication',
   initialState,
   reducers: {
-    restore: (state, action)=>{
+    starting: (state) => {
+      window.localStorage.clear();
+      state.loading = false;
+      state.user = null;
+      state.authentication = false;
+    },
+    restore: (state, action) => {
       state.loading = false;
       state.user = action.payload.user;
       state.authentication = action.payload.authentication;
@@ -18,7 +24,7 @@ export const authSlice = createSlice({
     login: (state, action) => {
       state.authentication = true;
       state.user = action.payload.user;
-      window.localStorage.setItem('login', JSON.stringify( action.payload.user));
+      window.localStorage.setItem('login', JSON.stringify(action.payload.user));
     },
     logout: (state) => {
       window.localStorage.clear();
@@ -29,6 +35,6 @@ export const authSlice = createSlice({
   },
 })
 
-export const { login, logout ,restore} = authSlice.actions
+export const { starting, login, logout, restore } = authSlice.actions
 
 export default authSlice.reducer

@@ -25,6 +25,7 @@ class Student {
 
             return sendSuccess(res, usuario);
         } catch (error) {
+            console.log(error);
             return sendError(res, "Se produjo un error de servidor, intente nuevamente.");
         }
     }

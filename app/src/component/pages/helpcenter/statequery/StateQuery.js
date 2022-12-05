@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import {  starting } from '../../../../store/authSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { starting } from '../../../../store/authSlice';
 
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
@@ -146,11 +145,15 @@ const StateQuery = () => {
                 abortControlleTable.current.signal
             );
 
+            const totalPaginacion = parseInt(Math.ceil((parseFloat(result.data.total) / this.state.filasPorPagina)));
+            const messagePaginacion = `Mostrando ${result.data.result.length} de ${totalPaginacion} Páginas`;
+
             setList(response.data.result);
+            setTotalPaginacion(totalPaginacion);
             messageTable.current = "No hay datos para mostrar.";
             setLoading(false);
         } catch (error) {
-            if(error.response.status === 403){
+            if (error.response.status === 403) {
                 dispatch(starting());
             }
 

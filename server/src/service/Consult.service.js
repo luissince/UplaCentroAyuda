@@ -49,7 +49,7 @@ class Consult {
                 parseInt(req.query.filasPorPagina),
             ]);
 
-
+ 
             let resultList = list.map(function (item, index) {
                 return {
                     ...item,

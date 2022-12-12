@@ -541,7 +541,6 @@ function Pace() {
 	};
 
 	getIntercept().on('request', function(_arg) {
-		console.log(_arg)
 		var after, args, request, type, url;
 		type = _arg.type; request = _arg.request; url = _arg.url;
 		if (shouldIgnoreURL(url)) {

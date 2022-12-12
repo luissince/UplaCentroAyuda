@@ -64,7 +64,6 @@ class Consult {
 
             return sendSuccess(res, { "result": resultList, "total": total[0].total });
         } catch (error) {
-            console.log(error)
             return sendError(res, "Se produjo un error de servidor, intente nuevamente.");
         }
     }

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import { keyUpSearch } from '../../../constants/tools';
 import "../index.css";
 
 const Index = (props) => {

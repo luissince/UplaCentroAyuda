@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { useLocation, Redirect } from 'react-router-dom';
 
-import { getIdConsult } from '../../../../../api/rutas';
-import { timeForma24 } from '../../../../../constants/tools';
+import { getIdConsult } from '../../../../api/rutas';
+import { timeForma24 } from '../../../../constants/tools';
 
 const Response = (props) => {
     const location = useLocation();

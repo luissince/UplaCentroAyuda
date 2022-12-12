@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import '../../../assets/css/loader.css';
+import '../../assets/css/loader.css';
 import { useDispatch } from 'react-redux';
-import { restore, starting } from '../../../store/authSlice';
-import { validToken } from '../../../api/rutas';
+import { restore, starting } from '../../store/authSlice';
+import { validToken } from '../../api/rutas';
 
 const Load = () => {
 

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { starting } from '../../../../store/authSlice';
+import { starting } from '../../../store/authSlice';
 
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
-import { listConsult, sendConsulta, getIdConsult } from '../../../../api/rutas';
+import { listConsult, sendConsulta, getIdConsult } from '../../../api/rutas';
 import {
     showModal,
     hideModal,
@@ -14,9 +14,9 @@ import {
     ModalAlertInfo,
     ModalAlertSuccess,
     ModalAlertCatch
-} from '../../../../constants/tools';
+} from '../../../constants/tools';
 
-import { images } from '../../../../constants/';
+import { images } from '../../../constants/';
 
 /**
  * 
@@ -145,16 +145,18 @@ const StateQuery = () => {
                 abortControlleTable.current.signal
             );
 
-            const totalPaginacion = parseInt(Math.ceil((parseFloat(result.data.total) / this.state.filasPorPagina)));
-            const messagePaginacion = `Mostrando ${result.data.result.length} de ${totalPaginacion} Páginas`;
-
+            const totalPaginacion = parseInt(Math.ceil((parseFloat(response.data.total) / filasPorPagina)));
+            const messagePaginacion = `Mostrando ${response.data.result.length} de ${totalPaginacion} Páginas`;
+            console.log(response)
             setList(response.data.result);
             setTotalPaginacion(totalPaginacion);
             messageTable.current = "No hay datos para mostrar.";
             setLoading(false);
         } catch (error) {
-            if (error.response.status === 403) {
-                dispatch(starting());
+            if (error.response) {
+                if (error.response.status === 403) {
+                    dispatch(starting());
+                }
             }
 
             if (error.message !== "canceled") {

@@ -3,15 +3,15 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
 
-import Menu from '../../layout/menu';
-import Header from '../../layout/header';
+import Menu from '../../component/layout/menu';
+import Header from '../../component/layout/header';
 
 import Welcome from '../welcome/Welcome';
 import Dashboard from '../dashboard/Dashboard';
 import NewQuery from '../helpcenter/newquery/NewQuery';
 import ResponseQuery from '../helpcenter/newquery/response/Response';
 import StateQuery from '../helpcenter/statequery/StateQuery';
-import NotFound from '../NotFound';
+import NotFound from '../pages/NotFound';
 
 const Inicio = (props) => {
 

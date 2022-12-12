@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { addConsult } from '../../../../api/rutas';
+import { addConsult } from '../../../api/rutas';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 import {
@@ -9,11 +9,11 @@ import {
     ModalAlertSuccess,
     ModalAlertCatch,
     imageBase64
-} from "../../../../constants/tools";
+} from "../../../constants/tools";
 
-import { filterStudent } from '../../../../api/rutas';
+import { filterStudent } from '../../../api/rutas';
 
-import SearchStudent from "../../../part/search_student";
+import SearchStudent from "../../../component/part/search_student";
 
 const NewQuery = (props) => {
     const selectItem = useRef(false);

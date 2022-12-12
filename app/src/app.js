@@ -3,10 +3,10 @@ import { Switch, Route,Redirect } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
 
-import Load from './component/pages/load/Load';
-import Login from './component/pages/login';
-import Inicio from './component/pages/inicio/Inicio';
-import NotFound from './component/pages/NotFound';
+import Load from './view/load/Load';
+import Login from './view/login';
+import Inicio from './view/inicio/Inicio';
+import NotFound from './view/pages/NotFound';
 
 function App() {
 

@@ -1,15 +1,15 @@
 import React, { useRef, useState } from "react";
 import { Redirect } from 'react-router-dom';
 
-import { getLogin } from '../../../api/rutas';
+import { getLogin } from '../../api/rutas';
 
 import { useDispatch } from 'react-redux';
-import { login } from '../../../store/authSlice';
+import { login } from '../../store/authSlice';
 
 import { useSelector } from 'react-redux';
 
 import { NotificationContainer, NotificationManager } from 'react-notifications';
-import { images } from '../../../constants/';
+import { images } from '../../constants/';
 
 const Index = (props) => {
 

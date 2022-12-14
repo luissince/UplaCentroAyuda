@@ -72,6 +72,8 @@ export function listConsult(object, token, signal) {
     return axios.get(`/api/consult`, {
         signal: signal,
         params: {
+            opcion: object.opcion,
+            buscar: object.buscar,
             posicionPagina: object.posicionPagina,
             filasPorPagina: object.filasPorPagina
         },

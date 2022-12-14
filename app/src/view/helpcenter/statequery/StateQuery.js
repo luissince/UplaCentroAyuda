@@ -18,6 +18,8 @@ import {
 
 import { images } from '../../../constants/';
 
+import Paginacion from '../../../component/pagination';
+
 /**
  * 
  */
@@ -29,18 +31,22 @@ const StateQuery = () => {
      * list = almacena la data de la consulta echa
      * restart = reiniciar el contado de la paginación
      */
+    const [buscar, setBuscar] = useState("");
+    const refBuscar = useRef(null);
     const [loading, setLoading] = useState(false);
     const [list, setList] = useState([]);
-    const [restart, setRestart] = useState(false);
+    const restart = useRef(false);
     // const [paginacion, setPaginacion] = useState(0);
+    const opcion = useRef(0);
     const paginacion = useRef(0);
-    const [totalPaginacion, setTotalPaginacion] = useState(0);
-    const [filasPorPagina, setFilasPorPagina] = useState(10);
+    const totalPaginacion = useRef(0);
+    const filasPorPagina = useRef(10);
     const messageTable = useRef('Cargando información...');
     const messagePaginacion = useRef('Mostranto 0 de 0 Páginas');
 
     /**
      * Variable para manejar el estado del modal
+     * idConsulta =
      * loadingModal =
      * messageModal =
      * ticket =
@@ -51,6 +57,8 @@ const StateQuery = () => {
      * correo =
      * asunto =
      * descripcion =
+     * consulta =
+     * refConsulta =
      */
     const idConsulta = useRef('');
     const [loadingModal, setLoadingModal] = useState(false);
@@ -78,7 +86,7 @@ const StateQuery = () => {
     const authentication = useSelector((state) => state.authentication);
 
     /**
-     * Varible encargada de ejecutar los eventos de redux
+     * Variable encargada de ejecutar los eventos de redux
      */
     const dispatch = useDispatch();
 
@@ -118,14 +126,39 @@ const StateQuery = () => {
      * 
      * @returns 
      */
-    const loadInit = async () => {
+    const loadInit = () => {
         if (loading) return;
 
         paginacion.current = 1;
-        setRestart(true);
-
-        fillTable();
+        restart.current = true;
+        fillTable(0, "");
     }
+
+    /**
+     * 
+     */
+    const paginacionContext = (listid) => {
+        paginacion.current = listid;
+        restart.current = false;
+        onEventPaginacion();
+    }
+
+    /**
+     * 
+     */
+    const onEventPaginacion = () => {
+        switch (opcion.current) {
+            case 0:
+                fillTable(0, "");
+                break;
+            case 1:
+                fillTable(1, "");
+                break;
+            default: fillTable(0, "");
+        }
+
+    }
+
 
     /**
      * 
@@ -138,18 +171,19 @@ const StateQuery = () => {
             setList([]);
 
             const response = await listConsult({
-                posicionPagina: ((paginacion.current - 1) * filasPorPagina),
-                filasPorPagina: filasPorPagina
+                opcion: opcion,
+                buscar: buscar,
+                posicionPagina: ((paginacion.current - 1) * filasPorPagina.current),
+                filasPorPagina: filasPorPagina.current
             },
                 authentication.user.token,
                 abortControlleTable.current.signal
             );
 
-            const totalPaginacion = parseInt(Math.ceil((parseFloat(response.data.total) / filasPorPagina)));
-            const messagePaginacion = `Mostrando ${response.data.result.length} de ${totalPaginacion} Páginas`;
-            console.log(response)
+            totalPaginacion.current = parseInt(Math.ceil((parseFloat(response.data.total) / filasPorPagina.current)));
+            messagePaginacion.current = `Mostrando ${response.data.result.length} de ${totalPaginacion.current} Páginas`;
+
             setList(response.data.result);
-            setTotalPaginacion(totalPaginacion);
             messageTable.current = "No hay datos para mostrar.";
             setLoading(false);
         } catch (error) {
@@ -161,9 +195,9 @@ const StateQuery = () => {
 
             if (error.message !== "canceled") {
                 setList([]);
-                setLoading(false);
                 messageTable.current = "Se produjo un error interno, intente nuevamente por favor.";
                 messagePaginacion.current = "Mostranto 0 de 0 Páginas";
+                setLoading(false);
             }
         }
     }
@@ -378,7 +412,15 @@ const StateQuery = () => {
                     <div className="tile">
                         <div className="mailbox-controls b-0">
                             <div className="btn-group">
-                                <input type="search" className="form-control" placeholder="Buscar..." aria-controls="sampleTable" />
+                                <input
+                                    type="search"
+                                    ref={refBuscar}
+                                    value={buscar}
+                                    onChange={(event) => setBuscar(event.target.value)}
+                                    className="form-control"
+                                    placeholder="Buscar..."
+                                    aria-controls="sampleTable"
+                                />
                             </div>
                             <div className="btn-group">
                                 <button className="btn btn-primary" onClick={loadInit}>
@@ -442,13 +484,13 @@ const StateQuery = () => {
                                 <div className="dataTables_paginate paging_simple_numbers">
                                     <nav aria-label="Page navigation">
                                         <ul className="pagination justify-content-end">
-                                            <li className="page-item disabled">
-                                                <span className="page-link"> Ante. </span></li>
-                                            <li className="page-item active" aria-current="page">
-                                                <span className="page-link">1</span></li>
-                                            <li className="page-item disabled">
-                                                <span className="page-link"> Sigui. </span>
-                                            </li>
+                                            <Paginacion
+                                                loading={loading}
+                                                totalPaginacion={totalPaginacion.current}
+                                                paginacion={paginacion.current}
+                                                fillTable={paginacionContext}
+                                                restart={restart.current}
+                                            />
                                         </ul>
                                     </nav>
                                 </div>

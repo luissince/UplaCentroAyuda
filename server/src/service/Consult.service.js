@@ -17,8 +17,8 @@ class Consult {
         try {
             const list = await conec.query(`SELECT
             co.idConsulta,
-            iif(LEN(CAST(co.ticket AS varchar)) <6, replicate('0',6-len(cast(co.ticket as varchar )))+cast(co.ticket  as varchar),CAST(co.ticket AS VARCHAR)) AS ticket,
-            concat(es.Est_Nombre,', ',es.Est_Paterno,' ',es.Est_Materno) AS estudiante,      
+            IIF(LEN(CAST(co.ticket AS varchar)) <6, replicate('0',6-len(CAST(co.ticket AS VARCHAR )))+CAST(co.ticket  as varchar),CAST(co.ticket AS VARCHAR)) AS ticket,
+            CONCAT(es.Est_Nombre,', ',es.Est_Paterno,' ',es.Est_Materno) AS estudiante,      
             co.asunto,
             CASE
                 WHEN co.tipoConsulta = 1 THEN 'ATENCIÓN'
@@ -43,13 +43,22 @@ class Consult {
             Soporte.Consulta AS co 
             INNER JOIN Est_Estudiante AS es ON es.Est_Id = co.Est_Id
             LEFT JOIN Est_Estudiante_Auxliar AS esa ON esa.Est_Id = es.Est_Id
+            WHERE 
+            ? = 0
+            OR
+            ? = 1 AND CONCAT(es.Est_Nombre,', ',es.Est_Paterno,' ',es.Est_Materno) LIKE CONCAT('%',?,'%')
             ORDER BY co.fecha DESC, co.hora DESC
 			OFFSET ? ROWS FETCH NEXT ? ROWS ONLY`, [
+                parseInt(req.query.opcion),
+
+                parseInt(req.query.opcion),
+                req.query.buscar,
+                
                 parseInt(req.query.posicionPagina),
                 parseInt(req.query.filasPorPagina),
             ]);
 
- 
+
             let resultList = list.map(function (item, index) {
                 return {
                     ...item,
@@ -57,10 +66,20 @@ class Consult {
                 }
             });
 
-            const total = await conec.query(`SELECT COUNT(*) AS total
-            FROM 
-            Soporte.Consulta AS co 
-            INNER JOIN Est_Estudiante AS es ON es.Est_Id = co.Est_Id`,);
+            const total = await conec.query(`SELECT 
+            COUNT(*) AS total
+            FROM Soporte.Consulta AS co 
+            INNER JOIN Est_Estudiante AS es ON es.Est_Id = co.Est_Id
+            LEFT JOIN Est_Estudiante_Auxliar AS esa ON esa.Est_Id = es.Est_Id
+            WHERE 
+            ? = 0
+            OR
+            ? = 1 AND CONCAT(es.Est_Nombre,', ',es.Est_Paterno,' ',es.Est_Materno) LIKE CONCAT('%',?,'%')`, [
+                parseInt(req.query.opcion),
+
+                parseInt(req.query.opcion),
+                req.query.buscar,
+            ]);
 
             return sendSuccess(res, { "result": resultList, "total": total[0].total });
         } catch (error) {
@@ -270,7 +289,7 @@ class Consult {
                 fecha,
                 hora
             ) VALUES(?,?,?,?,GETDATE(),GETDATE())`, [
-                idRespuesta, 
+                idRespuesta,
                 req.body.idConsulta,
                 req.body.c_cod_usuario,
                 req.body.detalle,
@@ -400,7 +419,7 @@ class Consult {
             const respuestas = await conec.query(`select 
             detalle 
             from Soporte.Respuesta 
-            where idConsulta = ?`, [ 
+            where idConsulta = ?`, [
                 req.query.idConsulta
             ]);
             return sendSuccess(res, { "consulta": consulta[0], "respuestas": respuestas });

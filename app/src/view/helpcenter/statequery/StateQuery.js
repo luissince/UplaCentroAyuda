@@ -10,6 +10,7 @@ import {
     hideModal,
     viewModal,
     clearModal,
+    keyUpSearch,
     ModalAlertDialog,
     ModalAlertInfo,
     ModalAlertSuccess,
@@ -31,7 +32,6 @@ const StateQuery = () => {
      * list = almacena la data de la consulta echa
      * restart = reiniciar el contado de la paginación
      */
-    const [buscar, setBuscar] = useState("");
     const refBuscar = useRef(null);
     const [loading, setLoading] = useState(false);
     const [list, setList] = useState([]);
@@ -132,6 +132,24 @@ const StateQuery = () => {
         paginacion.current = 1;
         restart.current = true;
         fillTable(0, "");
+
+        opcion.current = 0;
+    }
+
+    /**
+     * 
+     */
+    const searchText = (text) => {
+        if (loading) return;
+
+        if (text.trim().length === 0) return;
+
+        paginacion.current = 1;
+        restart.current = false;
+
+        fillTable(1, text.trim());
+
+        opcion.current = 1;
     }
 
     /**
@@ -152,7 +170,7 @@ const StateQuery = () => {
                 fillTable(0, "");
                 break;
             case 1:
-                fillTable(1, "");
+                fillTable(1, refBuscar.current.value);
                 break;
             default: fillTable(0, "");
         }
@@ -415,8 +433,9 @@ const StateQuery = () => {
                                 <input
                                     type="search"
                                     ref={refBuscar}
-                                    value={buscar}
-                                    onChange={(event) => setBuscar(event.target.value)}
+                                    // value={buscar}
+                                    // onChange={(event) => setBuscar(event.target.value)}
+                                    onKeyUp={(event) => keyUpSearch(event, () =>searchText(event.target.value))}
                                     className="form-control"
                                     placeholder="Buscar..."
                                     aria-controls="sampleTable"

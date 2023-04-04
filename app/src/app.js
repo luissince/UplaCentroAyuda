@@ -1,10 +1,8 @@
 import React from "react";
-import { Switch, Route,Redirect } from 'react-router-dom';
-
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
 import Load from './view/load/Load';
-import Login from './view/login';
+import Login from './view/login'; 
 import Inicio from './view/inicio/Inicio';
 import NotFound from './view/pages/NotFound';
 

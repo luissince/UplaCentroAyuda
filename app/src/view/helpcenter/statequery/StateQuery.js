@@ -17,7 +17,7 @@ import {
     ModalAlertCatch
 } from '../../../constants/tools';
 
-import { images } from '../../../constants/';
+import { images } from '../../../constants';
 
 import Paginacion from '../../../component/pagination';
 

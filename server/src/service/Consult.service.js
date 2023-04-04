@@ -83,6 +83,7 @@ class Consult {
 
             return sendSuccess(res, { "result": resultList, "total": total[0].total });
         } catch (error) {
+            console.log(error);
             return sendError(res, "Se produjo un error de servidor, intente nuevamente.");
         }
     }
@@ -306,8 +307,6 @@ class Consult {
                 req.body.idConsulta
             ]);
 
-            console.log(consult)
-
             await conec.commit(connection);
 
             // getUser(global.io);
@@ -326,7 +325,8 @@ class Consult {
 
             if (consult.length > 0 && consult[0].tokenApp != null) {
                 notification.sendPushToOneUser({
-                    tokenId: consult[0].tokenApp,
+                    // tokenId: consult[0].tokenApp,
+                    tokenId: "fJUEIvR0njdVJgshHOSZ_S:APA91bEu4l2Aip7iKs-cCu0rW5bqiaveks2RlUxWkfZTWPsZma8ZW4qss73mNxsB_g9dtQh5L35MSqoVLAwhl9lXUJziRAbpRfgSssucuYgq8ywmeGx1KQ5KjfEfqvtSyN2ohlvK-ep_",
                     data: {
                         title: consult[0].asunto,
                         subtitle: '&#128588;',
@@ -337,7 +337,6 @@ class Consult {
 
             return sendSuccess(res, "Se registro correctamente la consulta.");
         } catch (ex) {
-            console.log(ex);
             if (connection != null) {
                 await conec.rollback(connection);
             }
@@ -376,13 +375,25 @@ class Consult {
             Soporte.Consulta AS co 
             INNER JOIN Est_Estudiante AS es ON es.Est_Id = co.Est_Id
             LEFT JOIN Est_Estudiante_Auxliar AS esa ON esa.Est_Id = es.Est_Id
-			WHERE co.Est_Id = ?`, [
-                req.query.Est_Id
+			WHERE co.Est_Id = ?
+            ORDER BY co.fecha DESC, co.hora DESC
+			OFFSET ? ROWS FETCH NEXT ? ROWS ONLY`, [
+                req.query.Est_Id,
+                parseInt(req.query.posicionPagina),
+                parseInt(req.query.filasPorPagina),
             ]);
 
-            return sendSuccess(res, consulta);
+            let resultList = consulta.map(function (item, index) {
+                return {
+                    ...item,
+                    id: (index + 1) + parseInt(req.query.posicionPagina)
+                }
+            });
+           
+
+            return sendSuccess(res, resultList);
         } catch (ex) {
-            console.log(error);
+            console.log(ex);
             return sendError(res, "Se produjo un error de servidor, intente nuevamente.");
         }
     }

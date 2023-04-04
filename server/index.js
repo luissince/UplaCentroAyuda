@@ -1,7 +1,7 @@
 const Factory = require('./src/Factory');
 require('dotenv').config();
 
-async function bootstrap(){
+ function bootstrap(){
     const app = new Factory();
     app.create();
     app.middleware();

@@ -9,7 +9,7 @@ import { login } from '../../store/authSlice';
 import { useSelector } from 'react-redux';
 
 import { NotificationContainer, NotificationManager } from 'react-notifications';
-import { images } from '../../constants/';
+import { images } from '../../constants';
 
 const Index = (props) => {
 

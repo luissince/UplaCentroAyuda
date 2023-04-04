@@ -22,10 +22,10 @@ router.get('/api/user/token', token, verifyToken, userController.token);
 const consultController = require('../controller/Consult.controller');
 
 // router.get('/api/consult/', token, verifyToken, consultController.all);
-
+ 
 router.get('/api/consult', token, verifyToken, consultController.list);
 
-router.post('/api/consult/', token, verifyToken, consultController.add);
+router.post('/api/consult', token, verifyToken, consultController.add);
 
 router.get('/api/consult/id', token, verifyToken, consultController.id);
 
